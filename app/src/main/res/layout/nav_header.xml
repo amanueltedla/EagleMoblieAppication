@@ -1,0 +1,59 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="192dp"
+    android:background="?attr/colorPrimary"
+    android:padding="16dp"
+    android:theme="@style/ThemeOverlay.AppCompat.Dark"
+    android:orientation="vertical">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Yosef Thilahun"
+            android:textColor="@android:color/white"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            android:textSize="15dp"
+            android:layout_gravity="left|bottom"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Sign Out"
+            android:textColor="@android:color/white"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            android:textSize="15dp"
+            android:layout_gravity="right|bottom"
+            android:id="@+id/textView"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal|top">
+
+            <ImageView
+                android:layout_width="79dp"
+                android:layout_height="79dp"
+                android:id="@+id/imageView"
+                android:src="@drawable/eagle_icon"
+                android:layout_gravity="center" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="Eagle ስራ ነጋሪ"
+                android:id="@+id/textView2"
+                android:textStyle="bold"
+                android:textSize="15dp"
+                android:layout_marginTop="5dp" />
+        </LinearLayout>
+    </FrameLayout>
+
+</LinearLayout>

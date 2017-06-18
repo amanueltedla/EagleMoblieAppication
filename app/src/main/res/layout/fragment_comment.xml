@@ -1,0 +1,30 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.tedla.amanuel.eagleapp.Home">
+
+    <!-- TODO: Update blank fragment layout -->
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="textMultiLine"
+        android:ems="10"
+        android:id="@+id/editText"
+        android:layout_marginTop="30dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp" />
+
+    <Button
+        android:layout_width="98dp"
+        android:layout_height="wrap_content"
+        android:text="Submit"
+        android:id="@+id/button"
+        android:layout_gravity="center_horizontal|right"
+        android:layout_marginRight="20dp"
+        android:background="#fd7f45"
+        android:textColor="#ffffff"
+        android:layout_marginTop="10dp" />
+</LinearLayout>
