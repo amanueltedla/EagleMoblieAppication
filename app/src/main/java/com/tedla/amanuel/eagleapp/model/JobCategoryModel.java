@@ -1,9 +1,27 @@
 package com.tedla.amanuel.eagleapp.model;
 
+import java.io.Serializable;
+
 /**
  * Created by dVentus-hq on 6/18/2017.
  */
-public class JobCategoryModel {
-    public String _id;
-    public String name;
+public class JobCategoryModel implements Serializable {
+    private String _id;
+    private String name;
+
+    public String get_id() {
+        return _id;
+    }
+
+    public void set_id(String _id) {
+        this._id = _id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 }

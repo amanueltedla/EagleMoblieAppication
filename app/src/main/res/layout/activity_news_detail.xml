@@ -1,0 +1,54 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.tedla.amanuel.eagleapp.Home">
+
+    <include
+        layout="@layout/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+    <!-- TODO: Update blank fragment layout -->
+
+
+    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+
+        android:id="@+id/scrollView2"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="20dp"
+                android:text="Amazon Credit"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textStyle="bold"
+                android:textColor="#fd7f45" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="A year ago, Apple settled a giant class-action lawsuit (details below). The result was that millions of Americans got free credits in their accounts at Amazon, Barnes &amp; Noble, or other e-book retailers. If you&apos;re an American who is reading this article and you&apos;ve bought e-books in the past, there&apos;s a very good chance that you were included.  The catch? If they haven&apos;t been used, all of these credits expire this Saturday at midnight Pacific time. So you&apos;ll want to log in now and see if you have money waiting for you that will otherwise disappear in a matter of days.  Below you&apos;ll find: (a) how to check your balance, (b) background on this whole affair, and (c) a bit more on an extra tactic I discovered that meant I was able to more than double the credit I had waiting for me. (Although, as you&apos;ll see, I almost lost it twice!)"
+                android:id="@+id/textView5"
+                android:textColor="#000000"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="20dp"
+                android:layout_marginRight="20dp" />
+
+        </LinearLayout>
+
+    </ScrollView>
+</LinearLayout>

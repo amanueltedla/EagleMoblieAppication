@@ -13,23 +13,25 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.tedla.amanuel.eagleapp.model.VacancyModel;
+
+import java.util.List;
+
 /**
  * Created by dVentus-hq on 6/17/2017.
  */
-public class VacancyListAdapter extends ArrayAdapter<String>  {
+public class VacancyListAdapter extends ArrayAdapter<VacancyModel>  {
     private final Context context;
-    private final String[] jobTitles;
-    private final String[] companyNames;
-    private final String[] jobCategories;
+   // private final String[] jobTitles;
+    private final List<VacancyModel> vacancyModels;
     private final int[] icons;
     private final int[] readIcons;
 
-    public VacancyListAdapter(Context context, String[] jobTitles, String[] companyNames, String[] jobCategories, int[] icons, int[] readIcons) {
-        super(context,R.layout.vacancy_list,jobTitles);
+    public VacancyListAdapter(Context context, List<VacancyModel> vacancyModels, int[] icons, int[] readIcons) {
+        super(context,R.layout.vacancy_list,vacancyModels);
         this.context = context;
-        this.jobTitles = jobTitles;
-        this.companyNames = companyNames;
-        this.jobCategories = jobCategories;
+        //this.jobTitles = jobTitles;
+        this.vacancyModels = vacancyModels;
         this.icons = icons;
         this.readIcons = readIcons;
     }
@@ -45,9 +47,10 @@ public class VacancyListAdapter extends ArrayAdapter<String>  {
         TextView category = (TextView) rowView.findViewById(R.id.category);
         ImageView companyIcon = (ImageView) rowView.findViewById(R.id.companyIcon);
         ImageView readIcon = (ImageView) rowView.findViewById(R.id.readIcon);
-        jobTitle.setText(jobTitles[position]);
-        companyName.setText(companyNames[position]);
-        category.setText(jobCategories[position]);
+
+        jobTitle.setText(this.vacancyModels.get(position).getPosition());
+        companyName.setText(this.vacancyModels.get(position).getExprience());
+        category.setText(this.vacancyModels.get(position).getJob_category().get(0).getName());
         Drawable companyIconDrawable = context.getResources().getDrawable(icons[position]);
         companyIcon.setImageDrawable(companyIconDrawable);
         Drawable readIconDrawable = context.getResources().getDrawable(readIcons[position]);

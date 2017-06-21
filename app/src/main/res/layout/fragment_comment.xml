@@ -27,4 +27,15 @@
         android:background="#fd7f45"
         android:textColor="#ffffff"
         android:layout_marginTop="10dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="Please give us your comment"
+        android:id="@+id/textView3"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="20dp"
+        android:textColor="#fd7f45"
+        android:textSize="15dp" />
 </LinearLayout>
