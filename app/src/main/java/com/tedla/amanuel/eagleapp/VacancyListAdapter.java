@@ -51,10 +51,10 @@ public class VacancyListAdapter extends ArrayAdapter<VacancyModel>  {
         jobTitle.setText(this.vacancyModels.get(position).getPosition());
         companyName.setText(this.vacancyModels.get(position).getExprience());
         category.setText(this.vacancyModels.get(position).getJob_category().get(0).getName());
-        Drawable companyIconDrawable = context.getResources().getDrawable(icons[position]);
-        companyIcon.setImageDrawable(companyIconDrawable);
-        Drawable readIconDrawable = context.getResources().getDrawable(readIcons[position]);
-        readIcon.setImageDrawable(readIconDrawable);
+        //Drawable companyIconDrawable = context.getResources().getDrawable(icons[position]);
+        //companyIcon.setImageDrawable(companyIconDrawable);
+        //Drawable readIconDrawable = context.getResources().getDrawable(readIcons[position]);
+        //readIcon.setImageDrawable(readIconDrawable);
         return rowView;
     }
 }

@@ -51,6 +51,7 @@ public class News extends Fragment {
     }
 
     private void openNewsDetail(int position) {
+        MainActivity.speakWords("Position");
         Intent intent = new Intent(getActivity(), NewsDetail.class);
         //intent.putExtra("Vacancy", vacancyModels.get(position));
         this.startActivity(intent);

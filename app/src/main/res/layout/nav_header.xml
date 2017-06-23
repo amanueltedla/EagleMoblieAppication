@@ -41,7 +41,7 @@
                 android:layout_width="79dp"
                 android:layout_height="79dp"
                 android:id="@+id/imageView"
-                android:src="@drawable/eagle_icon"
+                android:src="@drawable/ic_add"
                 android:layout_gravity="center" />
 
             <TextView

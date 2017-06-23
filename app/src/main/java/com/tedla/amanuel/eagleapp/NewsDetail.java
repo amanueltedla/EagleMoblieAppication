@@ -15,6 +15,7 @@ public class NewsDetail extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
+        MainActivity.speakWords("Hi Bereket");
     }
     @Override
     public boolean onSupportNavigateUp() {

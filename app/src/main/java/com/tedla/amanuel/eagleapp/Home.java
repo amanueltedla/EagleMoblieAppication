@@ -2,8 +2,10 @@ package com.tedla.amanuel.eagleapp;
 
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,10 +30,11 @@ import java.util.Arrays;
 import java.util.List;
 
 
+
 /**
  * A simple {@link Fragment} subclass.
  */
-public class Home extends Fragment {
+public class Home extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
     public ListView vacancyListView;
     private String[] jobTitles;
     private String[] companeNames;
@@ -42,6 +45,8 @@ public class Home extends Fragment {
     private static final String TAG = "Home";
     private VacancyListAdapter vacancyListAdapter;
     private List<VacancyModel> vacancyModels;
+    private SwipeRefreshLayout swipeLayout;
+
 
     public Home() {
         // Required empty public constructor
@@ -52,7 +57,10 @@ public class Home extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_home, container, false);
-        ((MainActivity) getActivity()).setActionBarTitle("Home");
+        ((MainActivity) getActivity()).setActionBarTitle("Vacancy");
+        swipeLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swiperefresh);
+        swipeLayout.setOnRefreshListener(this);
+        swipeLayout.setColorSchemeColors(Color.parseColor("#fd7f45"));
         vacancyModels = new ArrayList<>();
         jobCategories = new String[Vacancy.vacancyList.length];
         jobTitles = new String[Vacancy.vacancyList.length];
@@ -60,6 +68,7 @@ public class Home extends Fragment {
         companyIcons = new int[Vacancy.vacancyList.length];
         readIcons = new int[Vacancy.vacancyList.length];
         this.volleyJsonArrayRequest(JSON_ARRAY_REQUEST_URL);
+        swipeLayout.setRefreshing(true);
         for (int i = 0; i < Vacancy.vacancyList.length; i++) {
             jobCategories[i] = Vacancy.vacancyList[i].getCategory();
             jobTitles[i] = Vacancy.vacancyList[i].getJobTitle();
@@ -78,6 +87,7 @@ public class Home extends Fragment {
             }
 
         });
+
         return rootView;
 
     }
@@ -98,27 +108,13 @@ public class Home extends Fragment {
             @Override
             public void onResponse(JSONArray response) {
                 Log.d(TAG, response.toString());
-//                LayoutInflater li = LayoutInflater.from(MainActivity.this);
-//                showDialogView = li.inflate(R.layout.show_dialog, null);
-//                outputTextView = (TextView)showDialogView.findViewById(R.id.text_view_dialog);
-//                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MainActivity.this);
-//                alertDialogBuilder.setView(showDialogView);
-//                alertDialogBuilder
-//                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-//                            public void onClick(DialogInterface dialog, int id) {
-//                            }
-//                        })
-//                        .setCancelable(false)
-//                        .create();
                 Gson gson = new Gson();
                 //Response response = gson.fromJson(yourJsonString, Response.class);
-                VacancyModel [] vacancyModelsarray = gson.fromJson(response.toString(), VacancyModel[].class);
+                VacancyModel[] vacancyModelsarray = gson.fromJson(response.toString(), VacancyModel[].class);
                 vacancyModels.clear();
                 vacancyModels.addAll(Arrays.asList(vacancyModelsarray));
                 refreshListView();
-//                outputTextView.setText(vacancyModels[0].get_id());
-//                alertDialogBuilder.show();
-//                progressDialog.hide();
+                swipeLayout.setRefreshing(false);
             }
 
         },
@@ -127,7 +123,7 @@ public class Home extends Fragment {
                     public void onErrorResponse(VolleyError error) {
                         VolleyLog.d(TAG, "Error: " + error.getMessage());
                         Toast.makeText(getActivity(), error.toString(), Toast.LENGTH_SHORT).show();
-
+                        swipeLayout.setRefreshing(false);
                     }
                 });
 
@@ -135,8 +131,28 @@ public class Home extends Fragment {
         AppSingleton.getInstance(getActivity()).addToRequestQueue(getRequest, REQUEST_TAG);
     }
 
+
+
+
+
     private void refreshListView() {
         vacancyListAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onRefresh() {
+        int i=1;
+        for(VacancyModel vacancyModel:vacancyModels){
+            MainActivity.speakWords("Vacancy " + i);
+            MainActivity.speakWords("Position");
+            MainActivity.speakWords(vacancyModel.getPosition());
+            MainActivity.speakWords("Experience");
+            MainActivity.speakWords(vacancyModel.getExprience());
+            MainActivity.speakWords("Category");
+            MainActivity.speakWords(vacancyModel.getJob_category().get(0).getName());
+            i++;
+        }
+        this.volleyJsonArrayRequest(JSON_ARRAY_REQUEST_URL);
     }
 
 }
