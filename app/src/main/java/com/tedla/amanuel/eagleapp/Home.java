@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -41,7 +42,7 @@ public class Home extends Fragment implements SwipeRefreshLayout.OnRefreshListen
     private String[] jobCategories;
     private int[] companyIcons;
     private int[] readIcons;
-    private static final String JSON_ARRAY_REQUEST_URL = "http://162.243.114.225:9090/vacancies";
+    private static final String JSON_ARRAY_REQUEST_URL = "https://sleepy-savannah-82444.herokuapp.com/vacancies";
     private static final String TAG = "Home";
     private VacancyListAdapter vacancyListAdapter;
     private List<VacancyModel> vacancyModels;
@@ -87,7 +88,7 @@ public class Home extends Fragment implements SwipeRefreshLayout.OnRefreshListen
             }
 
         });
-
+        setHasOptionsMenu(true);
         return rootView;
 
     }
@@ -131,7 +132,21 @@ public class Home extends Fragment implements SwipeRefreshLayout.OnRefreshListen
         AppSingleton.getInstance(getActivity()).addToRequestQueue(getRequest, REQUEST_TAG);
     }
 
-
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int i=1;
+        for(VacancyModel vacancyModel:vacancyModels){
+            TTS.speakWords("Vacancy " + i);
+            TTS.speakWords("Position");
+            TTS.speakWords(vacancyModel.getPosition());
+            TTS.speakWords("Experience");
+            TTS.speakWords(vacancyModel.getExprience());
+            TTS.speakWords("Category");
+            TTS.speakWords(vacancyModel.getJob_category().get(0).getName());
+            i++;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
 
 
@@ -141,17 +156,6 @@ public class Home extends Fragment implements SwipeRefreshLayout.OnRefreshListen
 
     @Override
     public void onRefresh() {
-        int i=1;
-        for(VacancyModel vacancyModel:vacancyModels){
-            MainActivity.speakWords("Vacancy " + i);
-            MainActivity.speakWords("Position");
-            MainActivity.speakWords(vacancyModel.getPosition());
-            MainActivity.speakWords("Experience");
-            MainActivity.speakWords(vacancyModel.getExprience());
-            MainActivity.speakWords("Category");
-            MainActivity.speakWords(vacancyModel.getJob_category().get(0).getName());
-            i++;
-        }
         this.volleyJsonArrayRequest(JSON_ARRAY_REQUEST_URL);
     }
 

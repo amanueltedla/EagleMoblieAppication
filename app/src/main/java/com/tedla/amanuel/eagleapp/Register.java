@@ -4,6 +4,8 @@ package com.tedla.amanuel.eagleapp;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,11 +13,23 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
+
+
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.tedla.amanuel.eagleapp.model.UserModel;
+
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -38,7 +52,7 @@ public class Register extends Fragment implements View.OnClickListener {
     private EditText password;
     private EditText confirmPassword;
 
-    private static final String SIGNUP_REQUEST_URL = "http://162.243.114.225:9090/users/signup";
+    private static final String SIGNUP_REQUEST_URL = "https://sleepy-savannah-82444.herokuapp.com/users/signup";
     public Register() {
         // Required empty public constructor
     }
@@ -76,45 +90,48 @@ public class Register extends Fragment implements View.OnClickListener {
             userModel.setFirst_name(firstName.getText().toString());
             userModel.setLast_name(lastName.getText().toString());
             userModel.setMobile(mobile.getText().toString());
-            userModel.setUser_type("Customer");
-            RegisterUser(userModel);
-            OpenCategoryChoice();
+            userModel.setUser_type("customer");
+            try {
+                RegisterUser(userModel);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            //OpenCategoryChoice();
         }
     }
 
-    public void RegisterUser(final UserModel user){
-        StringRequest postRequest = new StringRequest(Request.Method.POST, SIGNUP_REQUEST_URL, new Response.Listener<String>()
-                {
+    public void RegisterUser(final UserModel user) throws JSONException {
+
+
+       UserModel[] userModel = new UserModel[1];
+        userModel[0] = user;
+
+        Gson gson = new Gson();
+        String json = gson.toJson(user,UserModel.class);
+        Log.d("myTag", json);
+        JsonObjectRequest request = new JsonObjectRequest(
+                Request.Method.POST, SIGNUP_REQUEST_URL, new JSONObject(gson.toJson(user,UserModel.class)),
+                new Response.Listener<JSONObject>() {
                     @Override
-                    public void onResponse(String response) {
-                        Toast.makeText(getActivity(), "Register Successful", Toast.LENGTH_SHORT).show();
-                        Toast.makeText(getActivity(), response, Toast.LENGTH_SHORT).show();
+                    public void onResponse(JSONObject response) {
+                        Toast.makeText(getActivity(),"Working",Toast.LENGTH_LONG).show();
                     }
                 },
-                new Response.ErrorListener()
-                {
+                new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-
-
-                        Toast.makeText(getActivity(),error.toString(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(),"not working",Toast.LENGTH_LONG).show();
                     }
-                }
-        ) {
-            @Override
-            protected Map<String, String> getParams()
-            {
-                Map<String, String>  params = new HashMap<>();
-                params.put("password", user.getPassword());
-                params.put("user_name", user.getUser_name());
-                params.put("first_name", user.getFirst_name());
-                params.put("last_name", user.getLast_name());
-                params.put("user_type", user.getUser_type());
-                params.put("mobile", user.getMobile());
-                return params;
-            }
+                })
+        {
+
         };
-        AppSingleton.getInstance(getActivity()).addToRequestQueue(postRequest, SIGNUP_REQUEST_URL);
+//        request.setRetryPolicy(new
+//
+//                DefaultRetryPolicy(60000,
+//                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+//                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        AppSingleton.getInstance(getActivity()).addToRequestQueue(request, SIGNUP_REQUEST_URL);
     }
 
     private void OpenCategoryChoice() {

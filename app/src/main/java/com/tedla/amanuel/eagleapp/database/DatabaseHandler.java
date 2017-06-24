@@ -35,6 +35,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 + "MOBILE TEXT,"
                 + "EMAIL TEXT,"
                 + "LEVEL TEXT,"
+                + "SEEN INTEGER"
                 + "CATEGORY TEXT);");
         db.execSQL("CREATE TABLE NEWS ("
                 + "_id INTEGER PRIMARY KEY AUTOINCREMENT, "
@@ -61,6 +62,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                                      String mobile,
                                      String email,
                                      String level,
+                                     int seen,
                                      String category){
 
         ContentValues MeterFileValues = new ContentValues();
@@ -78,6 +80,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         MeterFileValues.put("MOBILE", mobile);
         MeterFileValues.put("EMAIL", email);
         MeterFileValues.put("LEVEL", level);
+        MeterFileValues.put("SEEN", seen);
         MeterFileValues.put("CATEGORY", category);
         db.insert("METER_FILE", null,MeterFileValues);
 

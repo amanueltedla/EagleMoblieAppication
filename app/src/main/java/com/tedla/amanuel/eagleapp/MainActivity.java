@@ -10,10 +10,15 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.speech.tts.TextToSpeech;
 import android.content.Intent;
 import android.speech.tts.TextToSpeech.OnInitListener;
+import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.Locale;
@@ -25,6 +30,11 @@ public class MainActivity extends AppCompatActivity implements OnInitListener{
     private NavigationView nvDrawer;
     private int MY_DATA_CHECK_CODE = 0;
     private static TextToSpeech myTTS;
+    private NavigationView navigationView;
+    private View headerview;
+    private TextView siginOut;
+    private TextView userName;
+
     // Make sure to be using android.support.v7.app.ActionBarDrawerToggle version.
     // The android.support.v4.app.ActionBarDrawerToggle has been deprecated.
     private ActionBarDrawerToggle drawerToggle;
@@ -37,7 +47,23 @@ public class MainActivity extends AppCompatActivity implements OnInitListener{
         Intent checkTTSIntent = new Intent();
         checkTTSIntent.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
         startActivityForResult(checkTTSIntent, MY_DATA_CHECK_CODE);
-
+        navigationView = (NavigationView) findViewById(R.id.nvView);
+        headerview = navigationView.getHeaderView(0);
+        siginOut = (TextView) headerview.findViewById(R.id.navSignOut);
+        siginOut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(siginOut.getText().toString().equalsIgnoreCase("sign out")){
+                    siginOut.setText("Sign in");
+                }
+                else{
+                    //mDrawer.closeDrawer(GravityCompat.START);
+                    openLoginPage();
+                    siginOut.setText("Sign out");
+                }
+            }
+        });
+        userName = (TextView) headerview.findViewById(R.id.navUserName);
         // Set a Toolbar to replace the ActionBar.
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle("Home");
@@ -70,6 +96,12 @@ public class MainActivity extends AppCompatActivity implements OnInitListener{
                         return true;
                     }
                 });
+    }
+
+    private void openLoginPage() {
+        Intent intent = new Intent(this, LoginPage.class);
+        //intent.putExtra("Vacancy", vacancyModels.get(position));
+        this.startActivity(intent);
     }
 
     public void selectDrawerItem(MenuItem menuItem) {
@@ -136,6 +168,13 @@ public class MainActivity extends AppCompatActivity implements OnInitListener{
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // The action bar home/up action should open or close the drawer.
         switch (item.getItemId()) {
@@ -160,14 +199,13 @@ public class MainActivity extends AppCompatActivity implements OnInitListener{
     public void onInit(int status) {
         if (status == TextToSpeech.SUCCESS) {
             myTTS.setLanguage(Locale.US);
+            TTS.myTTS = myTTS;
         }
         else if (status == TextToSpeech.ERROR) {
             Toast.makeText(this, "Sorry! Text To Speech failed...", Toast.LENGTH_LONG).show();
         }
     }
-    public static void speakWords(String speech) {
-        myTTS.speak(speech, TextToSpeech.QUEUE_ADD, null);
-    }
+
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == MY_DATA_CHECK_CODE) {
