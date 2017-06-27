@@ -87,7 +87,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         MeterFileValues.put("MOBILE", mobile);
         MeterFileValues.put("EMAIL", email);
         MeterFileValues.put("LEVEL", level);
-        MeterFileValues.put("SEEN", seen);
+        MeterFileValues.put("SEEN", 0);
         MeterFileValues.put("CATEGORY", category);
         db.insert("VACANCY", null,MeterFileValues);
     }
@@ -166,6 +166,13 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.execSQL("delete from "+ "VACANCY");
     }
 
-
+    public static void updateSeenVacancy(SQLiteDatabase db, String vacancyID){
+        ContentValues vacancyUpdate = new ContentValues();
+        vacancyUpdate.put("SEEN",1);
+        db.update("VACANCY",
+                vacancyUpdate,
+                "_id = ?",
+                new String[] {vacancyID});
+    }
 
 }

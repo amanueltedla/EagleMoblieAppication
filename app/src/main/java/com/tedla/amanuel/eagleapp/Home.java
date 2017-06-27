@@ -83,7 +83,7 @@ public class Home extends Fragment implements SwipeRefreshLayout.OnRefreshListen
             readIcons[i] = Vacancy.vacancyList[i].getReadIconId();
         }
         vacancyListView = (ListView) rootView.findViewById(R.id.vacancyListView);
-        vacancyListAdapter = new VacancyListAdapter(getActivity(), vacancyModels, companyIcons, readIcons);
+        vacancyListAdapter = new VacancyListAdapter(getActivity(), vacancyModels);
         vacancyListView.setAdapter(vacancyListAdapter);
         vacancyListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -108,6 +108,7 @@ public class Home extends Fragment implements SwipeRefreshLayout.OnRefreshListen
     }
 
     private void openVacancyDetail(int position) {
+        dbHandler.updateSeenVacancy(db,vacancyModels.get(position).get_id());
         Intent intent = new Intent(getActivity(), VacancyDetailAct.class);
         intent.putExtra("Vacancy", vacancyModels.get(position));
         this.startActivity(intent);
@@ -128,11 +129,11 @@ public class Home extends Fragment implements SwipeRefreshLayout.OnRefreshListen
                 //Response response = gson.fromJson(yourJsonString, Response.class);
                 try{
                     VacancyModel[] vacancyModelsarray = gson.fromJson(response.toString(), VacancyModel[].class);
-                    vacancyModels.clear();
-                    vacancyModels.addAll(Arrays.asList(vacancyModelsarray));
-                    refreshListView();
                     dbHandler.clearVacancy(db);
                     dbHandler.insertVacancy(db,Arrays.asList(vacancyModelsarray));
+                    vacancyModels.clear();
+                    vacancyModels.addAll(dbHandler.getVacancy(db));
+                    refreshListView();
                 }
                 catch (Exception e){
                     Toast.makeText(getActivity(), e.toString(), Toast.LENGTH_SHORT).show();
