@@ -2,6 +2,8 @@ package com.tedla.amanuel.eagleapp;
 
 
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -22,6 +24,8 @@ import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.tedla.amanuel.eagleapp.database.DatabaseHandler;
+import com.tedla.amanuel.eagleapp.model.BaseURL;
 import com.tedla.amanuel.eagleapp.model.VacancyModel;
 
 import org.json.JSONArray;
@@ -42,11 +46,13 @@ public class Home extends Fragment implements SwipeRefreshLayout.OnRefreshListen
     private String[] jobCategories;
     private int[] companyIcons;
     private int[] readIcons;
-    private static final String JSON_ARRAY_REQUEST_URL = "https://sleepy-savannah-82444.herokuapp.com/vacancies";
+    private static final String JSON_ARRAY_REQUEST_URL = BaseURL.baseUrl + "/vacancies";
     private static final String TAG = "Home";
     private VacancyListAdapter vacancyListAdapter;
     private List<VacancyModel> vacancyModels;
     private SwipeRefreshLayout swipeLayout;
+    private SQLiteDatabase db;
+    private DatabaseHandler dbHandler;
 
 
     public Home() {
@@ -68,7 +74,6 @@ public class Home extends Fragment implements SwipeRefreshLayout.OnRefreshListen
         companeNames = new String[Vacancy.vacancyList.length];
         companyIcons = new int[Vacancy.vacancyList.length];
         readIcons = new int[Vacancy.vacancyList.length];
-        this.volleyJsonArrayRequest(JSON_ARRAY_REQUEST_URL);
         swipeLayout.setRefreshing(true);
         for (int i = 0; i < Vacancy.vacancyList.length; i++) {
             jobCategories[i] = Vacancy.vacancyList[i].getCategory();
@@ -89,6 +94,15 @@ public class Home extends Fragment implements SwipeRefreshLayout.OnRefreshListen
 
         });
         setHasOptionsMenu(true);
+        try {
+            dbHandler = new DatabaseHandler(getActivity());
+
+        } catch (SQLiteException e) {
+            Toast toast = Toast.makeText(getActivity(), "Database unavailable", Toast.LENGTH_SHORT);
+            toast.show();
+        }
+        db = dbHandler.getWritableDatabase();
+        this.volleyJsonArrayRequest(JSON_ARRAY_REQUEST_URL);
         return rootView;
 
     }
@@ -100,8 +114,9 @@ public class Home extends Fragment implements SwipeRefreshLayout.OnRefreshListen
     }
 
     public void volleyJsonArrayRequest(String url) {
-
-        String REQUEST_TAG = "com.androidtutorialpoint.volleyJsonArrayRequest";
+        vacancyModels.clear();
+        vacancyModels.addAll(dbHandler.getVacancy(db));
+        refreshListView();
         //progressDialog.setMessage("Loading...");
         // progressDialog.show();
         JsonArrayRequest getRequest = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
@@ -111,10 +126,19 @@ public class Home extends Fragment implements SwipeRefreshLayout.OnRefreshListen
                 Log.d(TAG, response.toString());
                 Gson gson = new Gson();
                 //Response response = gson.fromJson(yourJsonString, Response.class);
-                VacancyModel[] vacancyModelsarray = gson.fromJson(response.toString(), VacancyModel[].class);
-                vacancyModels.clear();
-                vacancyModels.addAll(Arrays.asList(vacancyModelsarray));
-                refreshListView();
+                try{
+                    VacancyModel[] vacancyModelsarray = gson.fromJson(response.toString(), VacancyModel[].class);
+                    vacancyModels.clear();
+                    vacancyModels.addAll(Arrays.asList(vacancyModelsarray));
+                    refreshListView();
+                    dbHandler.clearVacancy(db);
+                    dbHandler.insertVacancy(db,Arrays.asList(vacancyModelsarray));
+                }
+                catch (Exception e){
+                    Toast.makeText(getActivity(), e.toString(), Toast.LENGTH_SHORT).show();
+                }
+
+
                 swipeLayout.setRefreshing(false);
             }
 
@@ -129,7 +153,7 @@ public class Home extends Fragment implements SwipeRefreshLayout.OnRefreshListen
                 });
 
         // Adding JsonObject request to request queue
-        AppSingleton.getInstance(getActivity()).addToRequestQueue(getRequest, REQUEST_TAG);
+        AppSingleton.getInstance(getActivity()).addToRequestQueue(getRequest,JSON_ARRAY_REQUEST_URL);
     }
 
     @Override
@@ -142,7 +166,7 @@ public class Home extends Fragment implements SwipeRefreshLayout.OnRefreshListen
             TTS.speakWords("Experience");
             TTS.speakWords(vacancyModel.getExprience());
             TTS.speakWords("Category");
-            TTS.speakWords(vacancyModel.getJob_category().get(0).getName());
+            TTS.speakWords(vacancyModel.getJob_category());
             i++;
         }
         return super.onOptionsItemSelected(item);

@@ -333,12 +333,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Register"
-                android:id="@+id/button3"
+                android:id="@+id/RegisterButton"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginLeft="30dp"
                 android:layout_marginRight="30dp"
                 android:textColor="#ffffff"
-                android:background="#fd7f45"
+                android:background="@drawable/button_formatter"
                 android:layout_marginBottom="20dp"
                 android:layout_marginTop="20dp" />
         </LinearLayout>

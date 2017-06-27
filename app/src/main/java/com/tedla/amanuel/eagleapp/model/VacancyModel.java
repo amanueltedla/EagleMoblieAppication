@@ -21,7 +21,25 @@ public class VacancyModel implements Serializable{
     private String mobile;
     private String email;
     private String level;
-    private List<JobCategoryModel> job_category;
+    private int seen;
+
+    public String getJob_category() {
+        return job_category;
+    }
+
+    public void setJob_category(String job_category) {
+        this.job_category = job_category;
+    }
+
+    private String job_category;
+
+    public int getSeen() {
+        return seen;
+    }
+
+    public void setSeen(int seen) {
+        this.seen = seen;
+    }
 
     public String get_id() {
         return _id;
@@ -135,13 +153,7 @@ public class VacancyModel implements Serializable{
         this.level = level;
     }
 
-    public List<JobCategoryModel> getJob_category() {
-        return job_category;
-    }
 
-    public void setJob_category(List<JobCategoryModel> job_category) {
-        this.job_category = job_category;
-    }
 
 
 }

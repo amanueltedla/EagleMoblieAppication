@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -14,26 +15,31 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.gson.Gson;
+import com.tedla.amanuel.eagleapp.model.BaseURL;
 import com.tedla.amanuel.eagleapp.model.UserModel;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 public class LoginPage extends AppCompatActivity implements View.OnClickListener {
-    private static final String LOGIN_REQUEST_URL = "https://sleepy-savannah-82444.herokuapp.com/users/login";
+    private static final String LOGIN_REQUEST_URL = BaseURL.baseUrl + "/users/login";
     private Button login;
     private EditText userID;
     private EditText password;
     private UserModel userModel;
+    private ProgressBar loginProgress;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login_page);
         login = (Button) findViewById(R.id.loginButton);
+        loginProgress = (ProgressBar) findViewById(R.id.loginProgressBar);
+        loginProgress.setVisibility(View.INVISIBLE);
         userID = (EditText) findViewById(R.id.userID);
         password = (EditText) findViewById(R.id.password);
         userModel = new UserModel();
         login.setOnClickListener(this);
+
     }
 
     @Override
@@ -43,6 +49,7 @@ public class LoginPage extends AppCompatActivity implements View.OnClickListener
             userModel.setPassword(password.getText().toString());
             try {
                 this.login(userModel);
+                this.loginProgress.setVisibility(View.VISIBLE);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -64,12 +71,14 @@ public class LoginPage extends AppCompatActivity implements View.OnClickListener
                     @Override
                     public void onResponse(JSONObject response) {
                         Toast.makeText(getBaseContext(),"Successful",Toast.LENGTH_LONG).show();
+                        loginProgress.setVisibility(View.INVISIBLE);
                         openMainActivity();
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
+                        loginProgress.setVisibility(View.INVISIBLE);
                         Toast.makeText(getBaseContext(),"not working",Toast.LENGTH_LONG).show();
                     }
                 })

@@ -15,7 +15,7 @@ import com.tedla.amanuel.eagleapp.model.VacancyModel;
 
 import java.util.Locale;
 
-public class VacancyDetailAct extends AppCompatActivity implements TextToSpeech.OnInitListener {
+public class VacancyDetailAct extends AppCompatActivity {
     private TextView postionTextView;
     private TextView descriptionTextView;
     private TextView experienceTextView;
@@ -29,18 +29,14 @@ public class VacancyDetailAct extends AppCompatActivity implements TextToSpeech.
     private TextView emailTextView;
     private TextView levelTextView;
     private TextView categoryTextView;
-    private static TextToSpeech myTTS;
     private Toolbar toolbar;
     private VacancyModel vacancyModel;
-    private int MY_DATA_CHECK_CODE = 0;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_vacancy_detail);
-        Intent checkTTSIntent = new Intent();
-        checkTTSIntent.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
-        startActivityForResult(checkTTSIntent, MY_DATA_CHECK_CODE);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle("Vacancy Detail");
         vacancyModel = (VacancyModel) getIntent().getSerializableExtra("Vacancy");
@@ -76,46 +72,7 @@ public class VacancyDetailAct extends AppCompatActivity implements TextToSpeech.
         mobileTextView.setText(vacancyModel.getMobile());
         emailTextView.setText(vacancyModel.getEmail());
         levelTextView.setText(vacancyModel.getLevel());
-        categoryTextView.setText(vacancyModel.getJob_category().get(0).getName());
-//        if(vacancyModel.getPosition() != null || !vacancyModel.getPosition().equals("")){
-//            TTS.speakWords("Position " + vacancyModel.getPosition());
-//        }
-//        if(vacancyModel.getJob_category().get(0).getName() != null || !vacancyModel.getJob_category().get(0).getName().equals("")){
-//            TTS.speakWords("Category " + vacancyModel.getJob_category().get(0).getName());
-//        }
-//        if(vacancyModel.getExprience() != null || !vacancyModel.getExprience().equals("")){
-//            TTS.speakWords("Experience " + vacancyModel.getExprience());
-//        }
-//        if(vacancyModel.getQualifications() != null || !vacancyModel.getQualifications().equals("")){
-//            TTS.speakWords("Qualification " + vacancyModel.getQualifications());
-//        }
-//        if(vacancyModel.getStatus() != null || !vacancyModel.getStatus().equals("")){
-//            TTS.speakWords("Status " + vacancyModel.getStatus());
-//        }
-//        if(vacancyModel.getDue_date() != null || !vacancyModel.getDue_date().equals("")){
-//            TTS.speakWords("Due Date " + vacancyModel.getDue_date());
-//        }
-//        if(vacancyModel.getSalary() != null || !vacancyModel.getSalary().equals("")){
-//            TTS.speakWords("Salary " + vacancyModel.getSalary());
-//        }
-//        if(vacancyModel.getNumber_required() != null || !vacancyModel.getNumber_required().equals("")){
-//            TTS.speakWords("Number Required " + vacancyModel.getNumber_required());
-//        }
-//        if(vacancyModel.getContact() != null || !vacancyModel.getContact().equals("")){
-//            TTS.speakWords("Contact " + vacancyModel.getContact());
-//        }
-//        if(vacancyModel.getMobile() != null || !vacancyModel.getMobile().equals("")){
-//            TTS.speakWords("Mobile " + vacancyModel.getMobile());
-//        }
-//        if(vacancyModel.getEmail() != null || !vacancyModel.getEmail().equals("")){
-//            TTS.speakWords("Email " + vacancyModel.getEmail());
-//        }
-//        if(vacancyModel.getLevel() != null || !vacancyModel.getLevel().equals("")){
-//            TTS.speakWords("Level " + vacancyModel.getLevel());
-//        }
-//        if(vacancyModel.getDescription() != null || !vacancyModel.getDescription().equals("")){
-//            TTS.speakWords("Description " + vacancyModel.getDescription());
-//        }
+        categoryTextView.setText(vacancyModel.getJob_category());
     }
 
     @Override
@@ -128,61 +85,38 @@ public class VacancyDetailAct extends AppCompatActivity implements TextToSpeech.
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        StringBuilder str = new StringBuilder();
+        if (item.getItemId() == R.id.action_narration) {
 
-        this.speakWords("Position " + vacancyModel.getPosition());
-        speakWords("Category " + vacancyModel.getJob_category().get(0).getName());
-        speakWords("Experience " + vacancyModel.getExprience());
-        speakWords("Qualification " + vacancyModel.getQualifications());
-
-
-        speakWords("Status " + vacancyModel.getStatus());
-
-        speakWords("Due Date " + vacancyModel.getDue_date());
-
-        speakWords("Salary " + vacancyModel.getSalary());
-
-        speakWords("Number Required " + vacancyModel.getNumber_required());
+            TTS.speakWords("Position " + vacancyModel.getPosition());
+            TTS.speakWords("Category " + vacancyModel.getJob_category());
+            TTS.speakWords("Experience " + vacancyModel.getExprience());
+            TTS.speakWords("Qualification " + vacancyModel.getQualifications());
 
 
-        speakWords("Contact " + vacancyModel.getContact());
+            TTS.speakWords("Status " + vacancyModel.getStatus());
 
-        speakWords("Mobile " + vacancyModel.getMobile());
+            TTS.speakWords("Due Date " + vacancyModel.getDue_date());
 
-        speakWords("Email " + vacancyModel.getEmail());
+            TTS.speakWords("Salary " + vacancyModel.getSalary());
 
-        speakWords("Level " + vacancyModel.getLevel());
+            TTS.speakWords("Number Required " + vacancyModel.getNumber_required());
 
-        speakWords("Description " + vacancyModel.getDescription());
 
-        Toast.makeText(this, "fadfad", Toast.LENGTH_LONG).show();
+            TTS.speakWords("Contact " + vacancyModel.getContact());
+
+            TTS.speakWords("Mobile " + vacancyModel.getMobile());
+
+            TTS.speakWords("Email " + vacancyModel.getEmail());
+
+            TTS.speakWords("Level " + vacancyModel.getLevel());
+
+            TTS.speakWords("Description " + vacancyModel.getDescription());
+        } else {
+            onBackPressed();
+        }
         return true;
     }
 
-    @Override
-    public void onInit(int status) {
-        if (status == TextToSpeech.SUCCESS) {
-            myTTS.setLanguage(Locale.US);
-        } else if (status == TextToSpeech.ERROR) {
-            Toast.makeText(this, "Sorry! Text To Speech failed...", Toast.LENGTH_LONG).show();
-        }
-    }
-
-    public static void speakWords(String speech) {
-        myTTS.speak(speech, android.speech.tts.TextToSpeech.QUEUE_ADD, null);
-    }
-
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == MY_DATA_CHECK_CODE) {
-            if (resultCode == TextToSpeech.Engine.CHECK_VOICE_DATA_PASS) {
-                myTTS = new TextToSpeech(this, this);
-            } else {
-                Intent installTTSIntent = new Intent();
-                installTTSIntent.setAction(TextToSpeech.Engine.ACTION_INSTALL_TTS_DATA);
-                startActivity(installTTSIntent);
-            }
-        }
-    }
 
     @Override
     public boolean onSupportNavigateUp() {

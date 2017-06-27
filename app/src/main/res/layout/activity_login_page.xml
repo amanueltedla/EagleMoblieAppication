@@ -56,7 +56,16 @@
                     android:textColor="#ffffff"
                     android:layout_marginTop="40dp" />
 
+                <ProgressBar
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/loginProgressBar"
+                    android:indeterminate="true"
+                    android:layout_gravity="center_horizontal|bottom"
+                    android:layout_marginTop="30dp" />
+
             </LinearLayout>
+
         </FrameLayout>
     </LinearLayout>
     <!-- TODO: Update blank fragment layout -->

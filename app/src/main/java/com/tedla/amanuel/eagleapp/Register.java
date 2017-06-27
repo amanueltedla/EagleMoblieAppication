@@ -25,12 +25,16 @@ import com.android.volley.toolbox.StringRequest;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.tedla.amanuel.eagleapp.model.BaseURL;
+import com.tedla.amanuel.eagleapp.model.SignUpResponseModel;
 import com.tedla.amanuel.eagleapp.model.UserModel;
+import com.tedla.amanuel.eagleapp.model.VacancyModel;
 
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -51,8 +55,8 @@ public class Register extends Fragment implements View.OnClickListener {
     private EditText country;
     private EditText password;
     private EditText confirmPassword;
-
-    private static final String SIGNUP_REQUEST_URL = "https://sleepy-savannah-82444.herokuapp.com/users/signup";
+    private SignUpResponseModel responseModel;
+    private static final String SIGNUP_REQUEST_URL = BaseURL.baseUrl + "/users/signup";
     public Register() {
         // Required empty public constructor
     }
@@ -96,7 +100,7 @@ public class Register extends Fragment implements View.OnClickListener {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            //OpenCategoryChoice();
+
         }
     }
 
@@ -114,7 +118,11 @@ public class Register extends Fragment implements View.OnClickListener {
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        Toast.makeText(getActivity(),"Working",Toast.LENGTH_LONG).show();
+                        Toast.makeText(getActivity(),"Successful",Toast.LENGTH_LONG).show();
+                        Gson gson = new Gson();
+                        //Response response = gson.fromJson(yourJsonString, Response.class);
+                        responseModel = gson.fromJson(response.toString(), SignUpResponseModel.class);
+                        OpenCategoryChoice();
                     }
                 },
                 new Response.ErrorListener() {
@@ -136,7 +144,7 @@ public class Register extends Fragment implements View.OnClickListener {
 
     private void OpenCategoryChoice() {
         Intent intent = new Intent(getActivity(), CategoryChoice.class);
-        //intent.putExtra("Vacancy", vacancyModels.get(position));
+        intent.putExtra("CustomerID", responseModel.get_id());
         this.startActivity(intent);
     }
 }
