@@ -9,19 +9,22 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.tedla.amanuel.eagleapp.model.NewsModel;
+
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by dVentus-hq on 6/17/2017.
  */
-public class NewsListAdapter  extends ArrayAdapter<String>  {
+public class NewsListAdapter  extends ArrayAdapter<NewsModel>  {
     private final Context context;
-    private final String[] NewsHeaders;
-    private final String[] NewsDetail;
+    private final List<NewsModel> newsModels;
 
-    public NewsListAdapter(Context context, String[] newsHeaders, String[] newsDetail) {
-        super(context,R.layout.news_list,newsHeaders);
+    public NewsListAdapter(Context context,List<NewsModel> newsModels ) {
+        super(context,R.layout.news_list,newsModels);
         this.context = context;
-        NewsHeaders = newsHeaders;
-        NewsDetail = newsDetail;
+        this.newsModels = newsModels;
     }
 
 
@@ -33,8 +36,8 @@ public class NewsListAdapter  extends ArrayAdapter<String>  {
         View rowView = inflater.inflate(R.layout.news_list,parent, false);
         TextView newsHead = (TextView) rowView.findViewById(R.id.NewsHead);
         TextView newsDetail = (TextView) rowView.findViewById(R.id.NewsDetail);
-        newsHead.setText(NewsHeaders[position]);
-        newsDetail.setText(NewsDetail[position]);
+        newsHead.setText(this.newsModels.get(position).getTitle());
+        newsDetail.setText(this.newsModels.get(position).getContent());
         return rowView;
     }
 }
