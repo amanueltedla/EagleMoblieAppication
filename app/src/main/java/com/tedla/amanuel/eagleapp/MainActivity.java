@@ -90,15 +90,15 @@ public class MainActivity extends AppCompatActivity implements OnInitListener{
         alertDialog.setMessage(DIALOGTEXT);
         alertDialog.setPositiveButton(SIGNOUTTEXT, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog,int which) {
-                Toast.makeText(getApplicationContext(), "You clicked on YES", Toast.LENGTH_SHORT).show();
+               dbHandler.clearUser(db);
+                siginOut.setText(SIGNINTEXT);
+                userName.setText("");
             }
         });
 
         // Setting Negative "NO" Button
         alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
-                // Write your code here to invoke NO event
-                Toast.makeText(getApplicationContext(), "You clicked on NO", Toast.LENGTH_SHORT).show();
                 dialog.cancel();
             }
         });
@@ -115,6 +115,7 @@ public class MainActivity extends AppCompatActivity implements OnInitListener{
             public void onClick(View v) {
                 if(siginOut.getText().toString().equalsIgnoreCase(SIGNOUTTEXT)){
                     alertDialog.show();
+
                 }
                 else{
                     //mDrawer.closeDrawer(GravityCompat.START);

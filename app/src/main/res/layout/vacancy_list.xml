@@ -58,9 +58,8 @@
             android:layout_height="12dp"
             android:id="@+id/readIcon"
             android:src="@drawable/dot"
-            android:layout_gravity="right"
-            android:layout_marginTop="20dp"
-            android:layout_marginRight="5dp" />
+            android:layout_marginRight="5dp"
+            android:layout_gravity="center_vertical|right" />
 
     </FrameLayout>
 

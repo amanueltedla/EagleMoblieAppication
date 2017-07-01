@@ -74,7 +74,7 @@ public class Register extends Fragment implements View.OnClickListener {
         lastName = (EditText) rootView.findViewById(R.id.lastName);
         email = (EditText) rootView.findViewById(R.id.email);
         birthDate = (EditText) rootView.findViewById(R.id.birthDate);
-        gender = (EditText) rootView.findViewById(R.id.gender);
+        //gender = (EditText) rootView.findViewById(R.id.gender);
         mobile = (EditText) rootView.findViewById(R.id.moblie);
         city = (EditText) rootView.findViewById(R.id.city);
         country = (EditText) rootView.findViewById(R.id.country);
