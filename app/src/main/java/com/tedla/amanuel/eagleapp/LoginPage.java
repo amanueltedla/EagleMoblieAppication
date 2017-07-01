@@ -1,6 +1,8 @@
 package com.tedla.amanuel.eagleapp;
 
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -15,7 +17,10 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.gson.Gson;
+import com.tedla.amanuel.eagleapp.database.DatabaseHandler;
 import com.tedla.amanuel.eagleapp.model.BaseURL;
+import com.tedla.amanuel.eagleapp.model.LoginResponseModel;
+import com.tedla.amanuel.eagleapp.model.SignUpResponseModel;
 import com.tedla.amanuel.eagleapp.model.UserModel;
 
 import org.json.JSONException;
@@ -28,10 +33,15 @@ public class LoginPage extends AppCompatActivity implements View.OnClickListener
     private EditText password;
     private UserModel userModel;
     private ProgressBar loginProgress;
+    private SQLiteDatabase db;
+    private DatabaseHandler dbHandler;
+
+    public static LoginResponseModel loginResponseModel;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login_page);
+        loginResponseModel = new LoginResponseModel();
         login = (Button) findViewById(R.id.loginButton);
         loginProgress = (ProgressBar) findViewById(R.id.loginProgressBar);
         loginProgress.setVisibility(View.INVISIBLE);
@@ -39,7 +49,14 @@ public class LoginPage extends AppCompatActivity implements View.OnClickListener
         password = (EditText) findViewById(R.id.password);
         userModel = new UserModel();
         login.setOnClickListener(this);
+        try {
+            dbHandler = new DatabaseHandler(this);
 
+        } catch (SQLiteException e) {
+            Toast toast = Toast.makeText(this, "Database unavailable", Toast.LENGTH_SHORT);
+            toast.show();
+        }
+        db = dbHandler.getWritableDatabase();
     }
 
     @Override
@@ -58,10 +75,6 @@ public class LoginPage extends AppCompatActivity implements View.OnClickListener
 
     public void login(final UserModel user) throws JSONException {
 
-
-        UserModel[] userModel = new UserModel[1];
-        userModel[0] = user;
-
         Gson gson = new Gson();
         String json = gson.toJson(user,UserModel.class);
         Log.d("myTag", json);
@@ -70,8 +83,12 @@ public class LoginPage extends AppCompatActivity implements View.OnClickListener
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
+                        dbHandler.clearUser(db);
+                        dbHandler.insertUser(db,user);
                         Toast.makeText(getBaseContext(),"Successful",Toast.LENGTH_LONG).show();
                         loginProgress.setVisibility(View.INVISIBLE);
+                        Gson gson = new Gson();
+                        loginResponseModel = gson.fromJson(response.toString(), LoginResponseModel.class);
                         openMainActivity();
                     }
                 },
@@ -85,11 +102,6 @@ public class LoginPage extends AppCompatActivity implements View.OnClickListener
         {
 
         };
-//        request.setRetryPolicy(new
-//
-//                DefaultRetryPolicy(60000,
-//                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
-//                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         AppSingleton.getInstance(getBaseContext()).addToRequestQueue(request, LOGIN_REQUEST_URL);
     }
 

@@ -6,6 +6,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.GridLayout;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -27,6 +28,8 @@ public class CategoryChoice extends AppCompatActivity implements View.OnClickLis
     private Button register;
     private AddCategoryModel addCategoryModel;
     private String customerID;
+    private GridLayout gridLayout;
+    private static final int column = 2;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,9 +40,15 @@ public class CategoryChoice extends AppCompatActivity implements View.OnClickLis
         register = (Button) findViewById(R.id.RegisterButton);
         register.setOnClickListener(this);
         setSupportActionBar(toolbar);
+        gridLayout = (GridLayout) findViewById(R.id.parentLayout);
+        gridLayout.removeAllViews();
         addCategoryModel = new AddCategoryModel();
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
+
+
+
+
     }
 
     public void addCategoryToCustomer(final AddCategoryModel model) throws JSONException {

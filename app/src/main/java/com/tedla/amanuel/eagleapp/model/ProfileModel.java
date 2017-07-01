@@ -6,6 +6,20 @@ package com.tedla.amanuel.eagleapp.model;
 public class ProfileModel {
     private String _id;
     private String first_name;
+    private String last_name;
+    private String mobile;
+    private String user;
+    private String customer;
+
+    public String getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(String customer) {
+        this.customer = customer;
+    }
+
+
 
     public String get_id() {
         return _id;
@@ -47,7 +61,5 @@ public class ProfileModel {
         this.user = user;
     }
 
-    private String last_name;
-    private String mobile;
-    private String user;
+
 }

@@ -1,6 +1,11 @@
 package com.tedla.amanuel.eagleapp;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.res.Configuration;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
+import android.os.Build;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -10,6 +15,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -21,10 +27,23 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.google.gson.Gson;
+import com.tedla.amanuel.eagleapp.database.DatabaseHandler;
+import com.tedla.amanuel.eagleapp.model.BaseURL;
+import com.tedla.amanuel.eagleapp.model.LoginResponseModel;
+import com.tedla.amanuel.eagleapp.model.UserModel;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity implements OnInitListener{
-
+    private static final String LOGIN_REQUEST_URL = BaseURL.baseUrl + "/users/login";
     private DrawerLayout mDrawer;
     private Toolbar toolbar;
     private NavigationView nvDrawer;
@@ -34,9 +53,12 @@ public class MainActivity extends AppCompatActivity implements OnInitListener{
     private View headerview;
     private TextView siginOut;
     private TextView userName;
-
-    // Make sure to be using android.support.v7.app.ActionBarDrawerToggle version.
-    // The android.support.v4.app.ActionBarDrawerToggle has been deprecated.
+    private AlertDialog.Builder alertDialog;
+    private static final String SIGNINTEXT = "Sign In";
+    private static final String SIGNOUTTEXT = "Sign Out";
+    private static final String DIALOGTEXT = "Are you sure you want to sign out?";
+    private SQLiteDatabase db;
+    private DatabaseHandler dbHandler;
     private ActionBarDrawerToggle drawerToggle;
 
     @Override
@@ -44,6 +66,44 @@ public class MainActivity extends AppCompatActivity implements OnInitListener{
         setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        try {
+            dbHandler = new DatabaseHandler(getBaseContext());
+
+        } catch (SQLiteException e) {
+            Toast toast = Toast.makeText(getBaseContext(), "Database unavailable", Toast.LENGTH_SHORT);
+            toast.show();
+        }
+        db = dbHandler.getWritableDatabase();
+        UserModel userModel = dbHandler.getUser(db);
+        if(userModel != null && LoginPage.loginResponseModel == null){
+            try {
+                this.login(userModel);
+            } catch (JSONException e) {
+                Toast toast = Toast.makeText(getBaseContext(), e.getMessage(), Toast.LENGTH_SHORT);
+                toast.show();
+            }
+        }
+        alertDialog = new AlertDialog.Builder(MainActivity.this);
+
+        alertDialog.setTitle(SIGNOUTTEXT);
+        alertDialog.setMessage(DIALOGTEXT);
+        alertDialog.setPositiveButton(SIGNOUTTEXT, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog,int which) {
+                Toast.makeText(getApplicationContext(), "You clicked on YES", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        // Setting Negative "NO" Button
+        alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                // Write your code here to invoke NO event
+                Toast.makeText(getApplicationContext(), "You clicked on NO", Toast.LENGTH_SHORT).show();
+                dialog.cancel();
+            }
+        });
+
+
         Intent checkTTSIntent = new Intent();
         checkTTSIntent.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
         startActivityForResult(checkTTSIntent, MY_DATA_CHECK_CODE);
@@ -53,13 +113,12 @@ public class MainActivity extends AppCompatActivity implements OnInitListener{
         siginOut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(siginOut.getText().toString().equalsIgnoreCase("sign out")){
-                    siginOut.setText("Sign in");
+                if(siginOut.getText().toString().equalsIgnoreCase(SIGNOUTTEXT)){
+                    alertDialog.show();
                 }
                 else{
                     //mDrawer.closeDrawer(GravityCompat.START);
                     openLoginPage();
-                    siginOut.setText("Sign out");
                 }
             }
         });
@@ -86,6 +145,14 @@ public class MainActivity extends AppCompatActivity implements OnInitListener{
         }
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
+        if(userModel == null){
+            siginOut.setText(SIGNINTEXT);
+            userName.setText("");
+        }
+        else{
+            siginOut.setText(SIGNOUTTEXT);
+            userName.setText(userModel.getUser_name());
+        }
     }
     private void setupDrawerContent(NavigationView navigationView) {
         navigationView.setNavigationItemSelectedListener(
@@ -149,10 +216,7 @@ public class MainActivity extends AppCompatActivity implements OnInitListener{
         mDrawer.closeDrawers();
     }
 
-    // `onPostCreate` called when activity start-up is complete after `onStart()`
-    // NOTE 1: Make sure to override the method with only a single `Bundle` argument
-    // Note 2: Make sure you implement the correct `onPostCreate(Bundle savedInstanceState)` method.
-    // There are 2 signatures and only `onPostCreate(Bundle state)` shows the hamburger icon.
+
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
@@ -186,8 +250,6 @@ public class MainActivity extends AppCompatActivity implements OnInitListener{
         return super.onOptionsItemSelected(item);
     }
     private ActionBarDrawerToggle setupDrawerToggle() {
-        // NOTE: Make sure you pass in a valid toolbar reference.  ActionBarDrawToggle() does not require it
-        // and will not render the hamburger icon without it.
         return new ActionBarDrawerToggle(this, mDrawer, toolbar, R.string.drawer_open,  R.string.drawer_close);
     }
 
@@ -218,5 +280,33 @@ public class MainActivity extends AppCompatActivity implements OnInitListener{
                 startActivity(installTTSIntent);
             }
         }
+    }
+
+    public void login(final UserModel user) throws JSONException {
+
+        Gson gson = new Gson();
+        String json = gson.toJson(user,UserModel.class);
+        Log.d("myTag", json);
+        JsonObjectRequest request = new JsonObjectRequest(
+                Request.Method.POST, LOGIN_REQUEST_URL, new JSONObject(gson.toJson(user,UserModel.class)),
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+
+                        Gson gson = new Gson();
+                        LoginPage.loginResponseModel = gson.fromJson(response.toString(), LoginResponseModel.class);
+                        Toast.makeText(getBaseContext(),"Login successful",Toast.LENGTH_LONG).show();
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(getBaseContext(),"Couldn't Sign In",Toast.LENGTH_LONG).show();
+                    }
+                })
+        {
+
+        };
+        AppSingleton.getInstance(getBaseContext()).addToRequestQueue(request, LOGIN_REQUEST_URL);
     }
 }

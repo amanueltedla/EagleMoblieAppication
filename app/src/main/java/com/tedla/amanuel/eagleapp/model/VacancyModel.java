@@ -22,16 +22,16 @@ public class VacancyModel implements Serializable{
     private String email;
     private String level;
     private int seen;
+    private String category;
 
-    public String getJob_category() {
-        return job_category;
+
+    public String getCategory() {
+        return category;
     }
 
-    public void setJob_category(String job_category) {
-        this.job_category = job_category;
+    public void setCategory(String category) {
+        this.category = category;
     }
-
-    private String job_category;
 
     public int getSeen() {
         return seen;

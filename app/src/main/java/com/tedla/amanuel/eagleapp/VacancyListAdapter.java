@@ -47,8 +47,8 @@ public class VacancyListAdapter extends ArrayAdapter<VacancyModel>  {
         ImageView readIcon = (ImageView) rowView.findViewById(R.id.readIcon);
 
         jobTitle.setText(this.vacancyModels.get(position).getPosition());
-        companyName.setText(this.vacancyModels.get(position).getExprience());
-        category.setText(this.vacancyModels.get(position).getJob_category());
+        companyName.setText(this.vacancyModels.get(position).getLevel());
+        category.setText(this.vacancyModels.get(position).getCategory());
         if(vacancyModels.get(position).getSeen() == 1){
             readIcon.setVisibility(View.INVISIBLE);
         }

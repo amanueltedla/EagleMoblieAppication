@@ -22,13 +22,18 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.tedla.amanuel.eagleapp.database.DatabaseHandler;
 import com.tedla.amanuel.eagleapp.model.BaseURL;
+import com.tedla.amanuel.eagleapp.model.LoginResponseModel;
+import com.tedla.amanuel.eagleapp.model.UserModel;
 import com.tedla.amanuel.eagleapp.model.VacancyModel;
 
 import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -65,6 +70,14 @@ public class Home extends Fragment implements SwipeRefreshLayout.OnRefreshListen
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_home, container, false);
         ((MainActivity) getActivity()).setActionBarTitle("Vacancy");
+        try {
+            dbHandler = new DatabaseHandler(getActivity());
+
+        } catch (SQLiteException e) {
+            Toast toast = Toast.makeText(getActivity(), "Database unavailable", Toast.LENGTH_SHORT);
+            toast.show();
+        }
+        db = dbHandler.getWritableDatabase();
         swipeLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swiperefresh);
         swipeLayout.setOnRefreshListener(this);
         swipeLayout.setColorSchemeColors(Color.parseColor("#fd7f45"));
@@ -94,14 +107,6 @@ public class Home extends Fragment implements SwipeRefreshLayout.OnRefreshListen
 
         });
         setHasOptionsMenu(true);
-        try {
-            dbHandler = new DatabaseHandler(getActivity());
-
-        } catch (SQLiteException e) {
-            Toast toast = Toast.makeText(getActivity(), "Database unavailable", Toast.LENGTH_SHORT);
-            toast.show();
-        }
-        db = dbHandler.getWritableDatabase();
         this.volleyJsonArrayRequest(JSON_ARRAY_REQUEST_URL);
         return rootView;
 
@@ -167,7 +172,7 @@ public class Home extends Fragment implements SwipeRefreshLayout.OnRefreshListen
             TTS.speakWords("Experience");
             TTS.speakWords(vacancyModel.getExprience());
             TTS.speakWords("Category");
-            TTS.speakWords(vacancyModel.getJob_category());
+            TTS.speakWords(vacancyModel.getCategory());
             i++;
         }
         return super.onOptionsItemSelected(item);
@@ -183,5 +188,6 @@ public class Home extends Fragment implements SwipeRefreshLayout.OnRefreshListen
     public void onRefresh() {
         this.volleyJsonArrayRequest(JSON_ARRAY_REQUEST_URL);
     }
+
 
 }

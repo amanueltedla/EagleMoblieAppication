@@ -72,7 +72,7 @@ public class VacancyDetailAct extends AppCompatActivity {
         mobileTextView.setText(vacancyModel.getMobile());
         emailTextView.setText(vacancyModel.getEmail());
         levelTextView.setText(vacancyModel.getLevel());
-        categoryTextView.setText(vacancyModel.getJob_category());
+        categoryTextView.setText(vacancyModel.getCategory());
     }
 
     @Override
@@ -88,7 +88,7 @@ public class VacancyDetailAct extends AppCompatActivity {
         if (item.getItemId() == R.id.action_narration) {
 
             TTS.speakWords("Position " + vacancyModel.getPosition());
-            TTS.speakWords("Category " + vacancyModel.getJob_category());
+            TTS.speakWords("Category " + vacancyModel.getCategory());
             TTS.speakWords("Experience " + vacancyModel.getExprience());
             TTS.speakWords("Qualification " + vacancyModel.getQualifications());
 

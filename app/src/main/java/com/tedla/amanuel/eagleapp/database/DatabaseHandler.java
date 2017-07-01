@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import com.tedla.amanuel.eagleapp.model.JobCategoryModel;
+import com.tedla.amanuel.eagleapp.model.UserModel;
 import com.tedla.amanuel.eagleapp.model.VacancyModel;
 
 import java.util.ArrayList;
@@ -48,12 +49,38 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 + "_id INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + "HEADER TEXT,"
                 + "DETAIL TEXT);");
+        db.execSQL("CREATE TABLE USER ("
+                + "USERNAME TEXT PRIMARY KEY, "
+                + "PASSWORD TEXT);");
+
         }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
     }
+    public static void insertUser(SQLiteDatabase db, UserModel userModel){
+        ContentValues userInfoValues = new ContentValues();
+        userInfoValues.put("USERNAME",userModel.getUser_name());
+        userInfoValues.put("PASSWORD",userModel.getPassword());
+        db.insert("USER", null, userInfoValues);
+    }
+    public static UserModel getUser(SQLiteDatabase db){
+        Cursor cursor = db.query ("USER",
+                new String[] {"USERNAME","PASSWORD"},
+               null,
+                null,
+                null, null,null);
+        UserModel userModel = new UserModel();
+        if(cursor.moveToFirst()){
+            userModel.setUser_name(cursor.getString(0));
+            userModel.setPassword(cursor.getString(1));
+            return userModel;
+        }
+        else {
+            return null;
+        }
 
+    }
     public static void insertVacancy(SQLiteDatabase db,
                                      String id,
                                      String code,
@@ -110,7 +137,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             MeterFileValues.put("EMAIL", vm.getEmail());
             MeterFileValues.put("LEVEL", vm.getLevel());
             MeterFileValues.put("SEEN", vm.getSeen());
-            MeterFileValues.put("CATEGORY", vm.getJob_category());
+            MeterFileValues.put("CATEGORY", vm.getCategory());
             db.insert("VACANCY", null, MeterFileValues);
         }
     }
@@ -155,7 +182,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 vacancyModel.setEmail(cursor.getString(12));
                 vacancyModel.setLevel(cursor.getString(13));
                 vacancyModel.setSeen(cursor.getInt(14));
-                vacancyModel.setJob_category(cursor.getString(15));
+                vacancyModel.setCategory(cursor.getString(15));
                 vacancyModels.add(vacancyModel);
                 cursor.moveToNext();
             }
@@ -165,6 +192,10 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     public static void clearVacancy(SQLiteDatabase db){
         db.execSQL("delete from "+ "VACANCY");
     }
+    public static void clearUser(SQLiteDatabase db){
+        db.execSQL("delete from "+ "USER");
+    }
+
 
     public static void updateSeenVacancy(SQLiteDatabase db, String vacancyID){
         ContentValues vacancyUpdate = new ContentValues();
