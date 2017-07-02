@@ -22,6 +22,7 @@ import com.tedla.amanuel.eagleapp.model.BaseURL;
 import com.tedla.amanuel.eagleapp.model.LoginResponseModel;
 import com.tedla.amanuel.eagleapp.model.SignUpResponseModel;
 import com.tedla.amanuel.eagleapp.model.UserModel;
+import com.tedla.amanuel.eagleapp.model.UserStatus;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -84,11 +85,12 @@ public class LoginPage extends AppCompatActivity implements View.OnClickListener
                     @Override
                     public void onResponse(JSONObject response) {
                         dbHandler.clearUser(db);
-                        dbHandler.insertUser(db,user);
+                        dbHandler.insertUser(db, user);
                         Toast.makeText(getBaseContext(),"Successful",Toast.LENGTH_LONG).show();
                         loginProgress.setVisibility(View.INVISIBLE);
                         Gson gson = new Gson();
                         loginResponseModel = gson.fromJson(response.toString(), LoginResponseModel.class);
+                        UserStatus.login = true;
                         openMainActivity();
                     }
                 },
@@ -96,7 +98,8 @@ public class LoginPage extends AppCompatActivity implements View.OnClickListener
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         loginProgress.setVisibility(View.INVISIBLE);
-                        Toast.makeText(getBaseContext(),"not working",Toast.LENGTH_LONG).show();
+                        UserStatus.login = false;
+                        Toast.makeText(getBaseContext(),"Cannot Login",Toast.LENGTH_LONG).show();
                     }
                 })
         {

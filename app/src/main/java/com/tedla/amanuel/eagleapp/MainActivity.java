@@ -36,6 +36,7 @@ import com.tedla.amanuel.eagleapp.database.DatabaseHandler;
 import com.tedla.amanuel.eagleapp.model.BaseURL;
 import com.tedla.amanuel.eagleapp.model.LoginResponseModel;
 import com.tedla.amanuel.eagleapp.model.UserModel;
+import com.tedla.amanuel.eagleapp.model.UserStatus;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -192,9 +193,6 @@ public class MainActivity extends AppCompatActivity implements OnInitListener{
             case R.id.nav_fifth_fragment:
                 fragmentClass = Register.class;
                 break;
-            case R.id.nav_sixth_fragment:
-                fragmentClass = Settings.class;
-                break;
             default:
                 fragmentClass = Home.class;
         }
@@ -296,12 +294,14 @@ public class MainActivity extends AppCompatActivity implements OnInitListener{
 
                         Gson gson = new Gson();
                         LoginPage.loginResponseModel = gson.fromJson(response.toString(), LoginResponseModel.class);
+                        UserStatus.login = true;
                         Toast.makeText(getBaseContext(),"Login successful",Toast.LENGTH_LONG).show();
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
+                        UserStatus.login = false;
                         Toast.makeText(getBaseContext(),"Couldn't Sign In",Toast.LENGTH_LONG).show();
                     }
                 })

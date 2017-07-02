@@ -22,9 +22,6 @@
             android:id="@+id/nav_fifth_fragment"
             android:icon="@drawable/register"
             android:title="Register" />
-        <item
-            android:id="@+id/nav_sixth_fragment"
-            android:icon="@drawable/settng"
-            android:title="Settings" />
+
     </group>
 </menu>

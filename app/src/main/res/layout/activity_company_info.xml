@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.tedla.amanuel.eagleapp.CompanyInfo">
+    <include
+        layout="@layout/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text=" www. Sranegari.com Eagle jobs net job information portal  family of dalet manfahering    Exchange since the early 1998 E.C the company has got different awards from government with clients successfully. it works on job information by gathering from different sources all job information in one search .within these years 1.5 million   jobseekers and 20,123 employer get the services. It is the premier job information service in Ethiopia, but now it has grown from a basement operation printout to electronic media. We have an extensive database of permanent, freelancing and contract job postings that presents excellent opportunities for clients. Whether you are looking for your first job or hoping to further your career growth with a more rewarding job, we have the solutions for you. Post your resume, get noticed by recruiters and get your foot through the door. "
+        android:id="@+id/textView9"
+        android:layout_margin="20dp"
+        android:textColor="#000000" />
+</LinearLayout>

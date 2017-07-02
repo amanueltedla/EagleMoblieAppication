@@ -22,18 +22,13 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonArrayRequest;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.tedla.amanuel.eagleapp.database.DatabaseHandler;
 import com.tedla.amanuel.eagleapp.model.BaseURL;
-import com.tedla.amanuel.eagleapp.model.LoginResponseModel;
-import com.tedla.amanuel.eagleapp.model.UserModel;
+import com.tedla.amanuel.eagleapp.model.UserStatus;
 import com.tedla.amanuel.eagleapp.model.VacancyModel;
 
 import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -46,12 +41,8 @@ import java.util.List;
  */
 public class Home extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
     public ListView vacancyListView;
-    private String[] jobTitles;
-    private String[] companeNames;
-    private String[] jobCategories;
-    private int[] companyIcons;
-    private int[] readIcons;
-    private static final String JSON_ARRAY_REQUEST_URL = BaseURL.baseUrl + "/vacancies";
+    private static final String NORMAL_VACANCY_LIST = BaseURL.baseUrl + "/vacancies";
+    private static final String OPEN_VACANCY_LIST = BaseURL.baseUrl + "/vacancies/open";
     private static final String TAG = "Home";
     private VacancyListAdapter vacancyListAdapter;
     private List<VacancyModel> vacancyModels;
@@ -82,19 +73,7 @@ public class Home extends Fragment implements SwipeRefreshLayout.OnRefreshListen
         swipeLayout.setOnRefreshListener(this);
         swipeLayout.setColorSchemeColors(Color.parseColor("#fd7f45"));
         vacancyModels = new ArrayList<>();
-        jobCategories = new String[Vacancy.vacancyList.length];
-        jobTitles = new String[Vacancy.vacancyList.length];
-        companeNames = new String[Vacancy.vacancyList.length];
-        companyIcons = new int[Vacancy.vacancyList.length];
-        readIcons = new int[Vacancy.vacancyList.length];
-        swipeLayout.setRefreshing(true);
-        for (int i = 0; i < Vacancy.vacancyList.length; i++) {
-            jobCategories[i] = Vacancy.vacancyList[i].getCategory();
-            jobTitles[i] = Vacancy.vacancyList[i].getJobTitle();
-            companeNames[i] = Vacancy.vacancyList[i].getCompanyName();
-            companyIcons[i] = Vacancy.vacancyList[i].getCompanyIconId();
-            readIcons[i] = Vacancy.vacancyList[i].getReadIconId();
-        }
+
         vacancyListView = (ListView) rootView.findViewById(R.id.vacancyListView);
         vacancyListAdapter = new VacancyListAdapter(getActivity(), vacancyModels);
         vacancyListView.setAdapter(vacancyListAdapter);
@@ -107,7 +86,12 @@ public class Home extends Fragment implements SwipeRefreshLayout.OnRefreshListen
 
         });
         setHasOptionsMenu(true);
-        this.volleyJsonArrayRequest(JSON_ARRAY_REQUEST_URL);
+        if(UserStatus.login) {
+            this.volleyJsonArrayRequest(NORMAL_VACANCY_LIST);
+        }
+        else{
+            this.volleyJsonArrayRequest(OPEN_VACANCY_LIST);
+        }
         return rootView;
 
     }
@@ -123,7 +107,7 @@ public class Home extends Fragment implements SwipeRefreshLayout.OnRefreshListen
         vacancyModels.clear();
         vacancyModels.addAll(dbHandler.getVacancy(db));
         refreshListView();
-        //progressDialog.setMessage("Loading...");
+        //progressDialog.setMessage("Loawsawaqqaing...");
         // progressDialog.show();
         JsonArrayRequest getRequest = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
 
@@ -159,7 +143,7 @@ public class Home extends Fragment implements SwipeRefreshLayout.OnRefreshListen
                 });
 
         // Adding JsonObject request to request queue
-        AppSingleton.getInstance(getActivity()).addToRequestQueue(getRequest,JSON_ARRAY_REQUEST_URL);
+        AppSingleton.getInstance(getActivity()).addToRequestQueue(getRequest, NORMAL_VACANCY_LIST);
     }
 
     @Override
@@ -169,7 +153,7 @@ public class Home extends Fragment implements SwipeRefreshLayout.OnRefreshListen
             TTS.speakWords("Vacancy " + i);
             TTS.speakWords("Position");
             TTS.speakWords(vacancyModel.getPosition());
-            TTS.speakWords("Experience");
+            TTS.speakWords("Level");
             TTS.speakWords(vacancyModel.getExprience());
             TTS.speakWords("Category");
             TTS.speakWords(vacancyModel.getCategory());
@@ -186,7 +170,12 @@ public class Home extends Fragment implements SwipeRefreshLayout.OnRefreshListen
 
     @Override
     public void onRefresh() {
-        this.volleyJsonArrayRequest(JSON_ARRAY_REQUEST_URL);
+        if(UserStatus.login) {
+            this.volleyJsonArrayRequest(NORMAL_VACANCY_LIST);
+        }
+        else{
+            this.volleyJsonArrayRequest(OPEN_VACANCY_LIST);
+        }
     }
 
 
