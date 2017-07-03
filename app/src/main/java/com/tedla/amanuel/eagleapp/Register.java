@@ -18,6 +18,7 @@ import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
@@ -26,16 +27,19 @@ import com.android.volley.toolbox.StringRequest;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.tedla.amanuel.eagleapp.model.BaseURL;
+import com.tedla.amanuel.eagleapp.model.JobCategoryModel;
 import com.tedla.amanuel.eagleapp.model.SignUpResponseModel;
 import com.tedla.amanuel.eagleapp.model.UserModel;
 import com.tedla.amanuel.eagleapp.model.VacancyModel;
 
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -95,12 +99,12 @@ public class Register extends Fragment implements View.OnClickListener {
             userModel.setLast_name(lastName.getText().toString());
             userModel.setMobile(mobile.getText().toString());
             userModel.setUser_type("customer");
-            try {
-                RegisterUser(userModel);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
+//            try {
+//                RegisterUser(userModel);
+//            } catch (JSONException e) {
+//                e.printStackTrace();
+//            }
+            OpenCategoryChoice();
         }
     }
 
@@ -142,9 +146,11 @@ public class Register extends Fragment implements View.OnClickListener {
         AppSingleton.getInstance(getActivity()).addToRequestQueue(request, SIGNUP_REQUEST_URL);
     }
 
+
+
     private void OpenCategoryChoice() {
         Intent intent = new Intent(getActivity(), CategoryChoice.class);
-        intent.putExtra("CustomerID", responseModel.get_id());
+        //intent.putExtra("CustomerID", responseModel.get_id());
         this.startActivity(intent);
     }
 }
