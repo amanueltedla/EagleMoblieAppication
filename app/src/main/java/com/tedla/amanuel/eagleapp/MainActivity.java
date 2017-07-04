@@ -138,7 +138,7 @@ public class MainActivity extends AppCompatActivity implements OnInitListener{
         // Setup drawer view
         setupDrawerContent(nvDrawer);
         // Insert the fragment by replacing any existing fragment
-        Class fragmentClass = Home.class;
+        Class fragmentClass = HomeTab.class;
         Fragment fragment = null;
         try {
             fragment = (Fragment) fragmentClass.newInstance();
@@ -179,7 +179,7 @@ public class MainActivity extends AppCompatActivity implements OnInitListener{
         Class fragmentClass;
         switch(menuItem.getItemId()) {
             case R.id.nav_first_fragment:
-                fragmentClass = Home.class;
+                fragmentClass = HomeTab.class;
                 break;
             case R.id.nav_second_fragment:
                 fragmentClass = News.class;
@@ -194,7 +194,7 @@ public class MainActivity extends AppCompatActivity implements OnInitListener{
                 fragmentClass = Register.class;
                 break;
             default:
-                fragmentClass = Home.class;
+                fragmentClass = HomeTab.class;
         }
 
         try {
