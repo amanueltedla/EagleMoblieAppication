@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import com.tedla.amanuel.eagleapp.model.JobCategoryModel;
+import com.tedla.amanuel.eagleapp.model.NewsModel;
 import com.tedla.amanuel.eagleapp.model.UserModel;
 import com.tedla.amanuel.eagleapp.model.VacancyModel;
 
@@ -63,6 +64,14 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         userInfoValues.put("USERNAME",userModel.getUser_name());
         userInfoValues.put("PASSWORD",userModel.getPassword());
         db.insert("USER", null, userInfoValues);
+    }
+    public static void insertNews(SQLiteDatabase db, List<NewsModel> newsmodels){
+        for(NewsModel news:newsmodels) {
+            ContentValues newsInfoValues = new ContentValues();
+            newsInfoValues.put("HEADER", news.getTitle());
+            newsInfoValues.put("DETAIL", news.getContent());
+            db.insert("NEWS", null, newsInfoValues);
+        }
     }
     public static UserModel getUser(SQLiteDatabase db){
         Cursor cursor = db.query ("USER",
@@ -141,7 +150,26 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             db.insert("VACANCY", null, MeterFileValues);
         }
     }
+   public List<NewsModel> getNews(SQLiteDatabase db){
+       List<NewsModel> newsModels = new ArrayList<>();
+       Cursor cursor = db.query ("NEWS",
+               new String[] {"HEADER","DETAIL"},
+               null,
+               null,
+               null, null,null);
 
+       if(cursor.moveToFirst()){
+           for (int k = 0; k < cursor.getCount(); k++) {
+               NewsModel newsModel = new NewsModel();
+               newsModel.setTitle(cursor.getString(0));
+               newsModel.setContent(cursor.getString(1));
+               newsModels.add(newsModel);
+               cursor.moveToNext();
+           }
+       }
+       return  newsModels;
+
+   }
     public List<VacancyModel>  getVacancy(SQLiteDatabase db) {
         Cursor cursor = db.query("VACANCY",
                 new String[]{"_id"
@@ -194,6 +222,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
     public static void clearUser(SQLiteDatabase db){
         db.execSQL("delete from "+ "USER");
+    }
+    public static void clearNews(SQLiteDatabase db){
+        db.execSQL("delete from "+ "NEWS");
     }
 
 

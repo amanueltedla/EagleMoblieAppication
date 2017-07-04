@@ -132,7 +132,7 @@ public class Register extends Fragment implements View.OnClickListener {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(getActivity(),"not working",Toast.LENGTH_LONG).show();
+                        Toast.makeText(getActivity(),BaseURL.networkErrorText,Toast.LENGTH_LONG).show();
                     }
                 })
         {

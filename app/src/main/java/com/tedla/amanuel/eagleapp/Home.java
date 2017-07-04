@@ -137,7 +137,7 @@ public class Home extends Fragment implements SwipeRefreshLayout.OnRefreshListen
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         VolleyLog.d(TAG, "Error: " + error.getMessage());
-                        Toast.makeText(getActivity(), error.toString(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), BaseURL.networkErrorText, Toast.LENGTH_SHORT).show();
                         swipeLayout.setRefreshing(false);
                     }
                 });

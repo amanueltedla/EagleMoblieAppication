@@ -21,12 +21,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MainActivity" />
-        <activity android:name=".VacancyDetailAct" />
-        <activity android:name=".NewsDetail" />
-        <activity android:name=".CategoryChoice" />
-        <activity android:name=".LoginPage" />
-        <activity android:name=".CompanyInfo" >
+        <activity android:name=".MainActivity" android:configChanges="orientation|screenSize"/>
+        <activity android:name=".VacancyDetailAct" android:configChanges="orientation|screenSize"/>
+        <activity android:name=".NewsDetail" android:configChanges="orientation|screenSize"/>
+        <activity android:name=".CategoryChoice" android:configChanges="orientation|screenSize"/>
+        <activity android:name=".LoginPage" android:configChanges="orientation|screenSize"/>
+        <activity android:name=".CompanyInfo" android:configChanges="orientation|screenSize">c4
         </activity>
     </application>
 

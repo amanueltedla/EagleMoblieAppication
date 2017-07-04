@@ -5,4 +5,5 @@ package com.tedla.amanuel.eagleapp.model;
  */
 public class BaseURL {
     public static final String baseUrl = "https://sleepy-savannah-82444.herokuapp.com";
+    public static final String networkErrorText = "Internet Error";
 }
