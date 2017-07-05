@@ -8,7 +8,11 @@
         layout="@layout/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
+    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
 
+        android:id="@+id/scrollView2"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
     <TextView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -17,4 +21,6 @@
         android:id="@+id/textView9"
         android:layout_margin="20dp"
         android:textColor="#000000" />
+       </ScrollView>
 </LinearLayout>
+
