@@ -17,9 +17,9 @@ public class CustomFragmentPageAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
         switch (position){
             case 0:
-                return new Home();
+                return new FreeVacancy();
             case 1:
-                return new Home();
+                return new FreeVacancy();
         }
         return null;
     }

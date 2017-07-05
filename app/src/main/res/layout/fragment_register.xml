@@ -3,7 +3,7 @@
     android:id="@+id/scrollView2"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.tedla.amanuel.eagleapp.Home">
+    tools:context="com.tedla.amanuel.eagleapp.FreeVacancy">
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 
     android:layout_width="match_parent"

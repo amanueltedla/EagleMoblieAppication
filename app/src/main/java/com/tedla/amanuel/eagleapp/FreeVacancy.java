@@ -39,11 +39,11 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class Home extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
+public class FreeVacancy extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
     public ListView vacancyListView;
     private static final String NORMAL_VACANCY_LIST = BaseURL.baseUrl + "/vacancies";
     private static final String OPEN_VACANCY_LIST = BaseURL.baseUrl + "/vacancies/open";
-    private static final String TAG = "Home";
+    private static final String TAG = "FreeVacancy";
     private VacancyListAdapter vacancyListAdapter;
     private List<VacancyModel> vacancyModels;
     private SwipeRefreshLayout swipeLayout;
@@ -51,7 +51,7 @@ public class Home extends Fragment implements SwipeRefreshLayout.OnRefreshListen
     private DatabaseHandler dbHandler;
 
 
-    public Home() {
+    public FreeVacancy() {
         // Required empty public constructor
     }
 
@@ -154,7 +154,7 @@ public class Home extends Fragment implements SwipeRefreshLayout.OnRefreshListen
             TTS.speakWords("Position");
             TTS.speakWords(vacancyModel.getPosition());
             TTS.speakWords("Level");
-            TTS.speakWords(vacancyModel.getExprience());
+            TTS.speakWords(vacancyModel.getLevel());
             TTS.speakWords("Category");
             TTS.speakWords(vacancyModel.getCategory());
             i++;
