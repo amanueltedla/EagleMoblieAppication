@@ -16,6 +16,70 @@ public class UserModel {
     private String mobile;
     private String gender;
     private String user_type;
+    private String _id;
+    private String last_modified;
+    private String date_created;
+    private String profile;
+    private String last_login;
+    private String status;
+    private String role;
+
+    public String get_id() {
+        return _id;
+    }
+
+    public void set_id(String _id) {
+        this._id = _id;
+    }
+
+    public String getLast_modified() {
+        return last_modified;
+    }
+
+    public void setLast_modified(String last_modified) {
+        this.last_modified = last_modified;
+    }
+
+    public String getDate_created() {
+        return date_created;
+    }
+
+    public void setDate_created(String date_created) {
+        this.date_created = date_created;
+    }
+
+    public String getProfile() {
+        return profile;
+    }
+
+    public void setProfile(String profile) {
+        this.profile = profile;
+    }
+
+    public String getLast_login() {
+        return last_login;
+    }
+
+    public void setLast_login(String last_login) {
+        this.last_login = last_login;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
 
     public String getUser_name() {
         return user_name;

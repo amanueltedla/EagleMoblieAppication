@@ -19,7 +19,7 @@ public class CustomFragmentPageAdapter extends FragmentPagerAdapter {
             case 0:
                 return new FreeVacancy();
             case 1:
-                return new FreeVacancy();
+                return new PaidVacancy();
         }
         return null;
     }

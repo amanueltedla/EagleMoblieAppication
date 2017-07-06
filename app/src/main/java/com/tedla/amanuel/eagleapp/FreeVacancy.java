@@ -8,8 +8,11 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +20,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -25,15 +29,18 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.google.gson.Gson;
 import com.tedla.amanuel.eagleapp.database.DatabaseHandler;
 import com.tedla.amanuel.eagleapp.model.BaseURL;
+import com.tedla.amanuel.eagleapp.model.LoginResponseModel;
 import com.tedla.amanuel.eagleapp.model.UserStatus;
 import com.tedla.amanuel.eagleapp.model.VacancyModel;
+import android.support.v7.widget.SearchView;
 
 import org.json.JSONArray;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
-
+import java.util.Map;
 
 
 /**
@@ -41,7 +48,6 @@ import java.util.List;
  */
 public class FreeVacancy extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
     public ListView vacancyListView;
-    private static final String NORMAL_VACANCY_LIST = BaseURL.baseUrl + "/vacancies";
     private static final String OPEN_VACANCY_LIST = BaseURL.baseUrl + "/vacancies/open";
     private static final String TAG = "FreeVacancy";
     private VacancyListAdapter vacancyListAdapter;
@@ -49,6 +55,7 @@ public class FreeVacancy extends Fragment implements SwipeRefreshLayout.OnRefres
     private SwipeRefreshLayout swipeLayout;
     private SQLiteDatabase db;
     private DatabaseHandler dbHandler;
+    private SearchView searchView;
 
 
     public FreeVacancy() {
@@ -86,12 +93,8 @@ public class FreeVacancy extends Fragment implements SwipeRefreshLayout.OnRefres
 
         });
         setHasOptionsMenu(true);
-        if(UserStatus.login) {
-            this.volleyJsonArrayRequest(NORMAL_VACANCY_LIST);
-        }
-        else{
-            this.volleyJsonArrayRequest(OPEN_VACANCY_LIST);
-        }
+        this.volleyJsonArrayRequest(OPEN_VACANCY_LIST);
+
         return rootView;
 
     }
@@ -140,25 +143,67 @@ public class FreeVacancy extends Fragment implements SwipeRefreshLayout.OnRefres
                         Toast.makeText(getActivity(), BaseURL.networkErrorText, Toast.LENGTH_SHORT).show();
                         swipeLayout.setRefreshing(false);
                     }
-                });
+                }){
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                String auth = "Bearer " + LoginPage.loginResponseModel.getToken();
+                headers.put("Content-Type", "application/json");
+                headers.put("Authorization", auth);
+                return headers;
+            }
+
+        };
+
 
         // Adding JsonObject request to request queue
-        AppSingleton.getInstance(getActivity()).addToRequestQueue(getRequest, NORMAL_VACANCY_LIST);
+        AppSingleton.getInstance(getActivity()).addToRequestQueue(getRequest, OPEN_VACANCY_LIST);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        final MenuItem myActionMenuItem = menu.findItem( R.id.action_search);
+        searchView = (SearchView) myActionMenuItem.getActionView();
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                Toast.makeText(getActivity(),query,Toast.LENGTH_LONG).show();
+                // Toast like print
+                //UserFeedback.show( "SearchOnQueryTextSubmit: " + query);
+                if( ! searchView.isIconified()) {
+                    searchView.setIconified(true);
+                }
+                myActionMenuItem.collapseActionView();
+                return false;
+            }
+            @Override
+            public boolean onQueryTextChange(String s) {
+                // UserFeedback.show( "SearchOnQueryTextChanged: " + s);
+                return false;
+            }
+        });
+
+        super.onCreateOptionsMenu(menu, inflater);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        int i=1;
-        for(VacancyModel vacancyModel:vacancyModels){
-            TTS.speakWords("Vacancy " + i);
-            TTS.speakWords("Position");
-            TTS.speakWords(vacancyModel.getPosition());
-            TTS.speakWords("Level");
-            TTS.speakWords(vacancyModel.getLevel());
-            TTS.speakWords("Category");
-            TTS.speakWords(vacancyModel.getCategory());
-            i++;
-        }
+//        int i=1;
+//        for(VacancyModel vacancyModel:vacancyModels){
+//            TTS.speakWords("Vacancy " + i);
+//            TTS.speakWords("Position");
+//            TTS.speakWords(vacancyModel.getPosition());
+//            TTS.speakWords("Level");
+//            TTS.speakWords(vacancyModel.getLevel());
+//            TTS.speakWords("Category");
+//            TTS.speakWords(vacancyModel.getCategory());
+//            i++;
+//        }
+
+
+
+
+
         return super.onOptionsItemSelected(item);
     }
 
@@ -170,12 +215,8 @@ public class FreeVacancy extends Fragment implements SwipeRefreshLayout.OnRefres
 
     @Override
     public void onRefresh() {
-        if(UserStatus.login) {
-            this.volleyJsonArrayRequest(NORMAL_VACANCY_LIST);
-        }
-        else{
             this.volleyJsonArrayRequest(OPEN_VACANCY_LIST);
-        }
+
     }
 
 

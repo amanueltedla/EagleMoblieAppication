@@ -3,68 +3,63 @@ package com.tedla.amanuel.eagleapp.model;
 /**
  * Created by dVentus-hq on 7/1/2017.
  */
-public class LoginUserModel extends  SignUpResponseModel {
-    private String last_modified;
-    private String date_created;
-    private String user_name;
-    private String last_login;
-    private String status;
-    private String role;
-    private String realm;
+public class LoginUserModel {
+    private String _id;
+    private String first_name;
+    private String last_name;
+    private String mobile;
+    private UserModel user;
+    private CustomerModel customer;
 
-    public String getLast_modified() {
-        return last_modified;
+    public String get_id() {
+        return _id;
     }
 
-    public void setLast_modified(String last_modified) {
-        this.last_modified = last_modified;
+    public void set_id(String _id) {
+        this._id = _id;
     }
 
-    public String getDate_created() {
-        return date_created;
+    public String getFirst_name() {
+        return first_name;
     }
 
-    public void setDate_created(String date_created) {
-        this.date_created = date_created;
+    public void setFirst_name(String first_name) {
+        this.first_name = first_name;
     }
 
-    public String getUser_name() {
-        return user_name;
+    public String getLast_name() {
+        return last_name;
     }
 
-    public void setUser_name(String user_name) {
-        this.user_name = user_name;
+    public void setLast_name(String last_name) {
+        this.last_name = last_name;
     }
 
-    public String getLast_login() {
-        return last_login;
+    public String getMobile() {
+        return mobile;
     }
 
-    public void setLast_login(String last_login) {
-        this.last_login = last_login;
+    public void setMobile(String mobile) {
+        this.mobile = mobile;
     }
 
-    public String getStatus() {
-        return status;
+    public UserModel getUser() {
+        return user;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setUser(UserModel user) {
+        this.user = user;
     }
 
-    public String getRole() {
-        return role;
+    public CustomerModel getCustomer() {
+        return customer;
     }
 
-    public void setRole(String role) {
-        this.role = role;
+    public void setCustomer(CustomerModel customer) {
+        this.customer = customer;
     }
 
-    public String getRealm() {
-        return realm;
-    }
 
-    public void setRealm(String realm) {
-        this.realm = realm;
-    }
+
+
 }
