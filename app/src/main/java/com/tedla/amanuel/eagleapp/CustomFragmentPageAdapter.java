@@ -33,7 +33,7 @@ public class CustomFragmentPageAdapter extends FragmentPagerAdapter {
             case 0:
                 return "Free";
             case 1:
-                return "Paid";
+                return "My Vacancy";
         }
         return null;
     }
