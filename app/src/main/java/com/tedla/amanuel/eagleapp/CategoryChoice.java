@@ -1,5 +1,6 @@
 package com.tedla.amanuel.eagleapp;
 
+import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.support.v4.widget.CompoundButtonCompat;
@@ -15,6 +16,7 @@ import android.widget.GridLayout;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -33,7 +35,9 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class CategoryChoice extends AppCompatActivity implements View.OnClickListener {
     private Toolbar toolbar;
@@ -47,6 +51,7 @@ public class CategoryChoice extends AppCompatActivity implements View.OnClickLis
     private static final int columnCount = 1;
     private List<CheckBox> checkBoxes;
     private ProgressBar categoryProgress;
+    private int categoryCount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,7 +62,7 @@ public class CategoryChoice extends AppCompatActivity implements View.OnClickLis
         toolbar.setTitle("Job Category");
         customerID = getIntent().getStringExtra("CustomerID");
         register = (Button) findViewById(R.id.RegisterButton);
-        register.setEnabled(false);
+        register.setVisibility(View.INVISIBLE);
         register.setOnClickListener(this);
         setSupportActionBar(toolbar);
         gridLayout = (GridLayout) findViewById(R.id.parentLayout);
@@ -79,15 +84,28 @@ public class CategoryChoice extends AppCompatActivity implements View.OnClickLis
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
+                        categoryProgress.setVisibility(View.INVISIBLE);
+                        if(categoryCount == checkBoxes.size()){
+                            openLoginPage();
+                        }
                         Toast.makeText(getBaseContext(), "Successful", Toast.LENGTH_LONG).show();
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
+                        categoryProgress.setVisibility(View.INVISIBLE);
                         Toast.makeText(getBaseContext(), "not working", Toast.LENGTH_LONG).show();
                     }
                 }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                String auth = "Bearer " + LoginPage.loginResponseModel.getToken();
+                headers.put("Content-Type", "application/json");
+                headers.put("Authorization", auth);
+                return headers;
+            }
 
         };
         AppSingleton.getInstance(getBaseContext()).addToRequestQueue(request, ADD_CATEGORY_REQUEST_URL);
@@ -102,11 +120,12 @@ public class CategoryChoice extends AppCompatActivity implements View.OnClickLis
     @Override
     public void onClick(View v) {
         if (v.getId() == R.id.RegisterButton) {
-
+            categoryCount = 0;
             for (CheckBox checkBox : checkBoxes) {
-
+                categoryCount++;
+                categoryProgress.setVisibility(View.VISIBLE);
                 if (checkBox.isChecked()) {
- //                   Toast.makeText(getBaseContext(), checkBox.getText(), Toast.LENGTH_LONG).show();
+                    //                   Toast.makeText(getBaseContext(), checkBox.getText(), Toast.LENGTH_LONG).show();
                     addCategoryModel.setCustomerId(this.customerID);
                     addCategoryModel.setJob_category(checkBox.getTag().toString());
                     try {
@@ -132,7 +151,7 @@ public class CategoryChoice extends AppCompatActivity implements View.OnClickLis
                     jobCategoryModels.clear();
                     jobCategoryModels.addAll(Arrays.asList(jobCategoryModels2));
                     setupCheckboxes();
-                    register.setEnabled(true);
+                    register.setVisibility(View.VISIBLE);
                 } catch (Exception e) {
                     Toast.makeText(getBaseContext(), e.toString(), Toast.LENGTH_SHORT).show();
                 }
@@ -145,7 +164,17 @@ public class CategoryChoice extends AppCompatActivity implements View.OnClickLis
                         categoryProgress.setVisibility(View.INVISIBLE);
                         Toast.makeText(getBaseContext(), error.toString(), Toast.LENGTH_SHORT).show();
                     }
-                });
+                }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                String auth = "Bearer " + LoginPage.loginResponseModel.getToken();
+                headers.put("Content-Type", "application/json");
+                headers.put("Authorization", auth);
+                return headers;
+            }
+
+        };
 
         // Adding JsonObject request to request queue
         AppSingleton.getInstance(getBaseContext()).addToRequestQueue(getRequest, CATEGORIES_REQUEST_URL);
@@ -181,5 +210,12 @@ public class CategoryChoice extends AppCompatActivity implements View.OnClickLis
             checkBoxes.add(checkBox);
         }
     }
+
+    private void openLoginPage() {
+        Intent intent = new Intent(this, LoginPage.class);
+        //intent.putExtra("Vacancy", vacancyModels.get(position));
+        this.startActivity(intent);
+    }
+
 
 }

@@ -23,6 +23,26 @@ public class UserModel {
     private String last_login;
     private String status;
     private String role;
+    private String exprience;
+
+    public String getLevel() {
+        return level;
+    }
+
+    public void setLevel(String level) {
+        this.level = level;
+    }
+
+    public String getExprience() {
+        return exprience;
+    }
+
+    public void setExprience(String exprience) {
+        this.exprience = exprience;
+    }
+
+    private String level;
+
 
     public String get_id() {
         return _id;

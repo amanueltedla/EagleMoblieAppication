@@ -44,6 +44,7 @@ import java.util.Map;
 public class PaidVacancy extends Fragment implements SwipeRefreshLayout.OnRefreshListener{
     public ListView vacancyListView;
     private static final String PAID_VACANCY_LIST = BaseURL.baseUrl + "/vacancies";
+    private static final String USER_VACANCY = "/vacancies/searchByCategory?category=";
     private static final String TAG = "PaidVacancy";
     private VacancyListAdapter vacancyListAdapter;
     private List<VacancyModel> vacancyModels;
@@ -177,7 +178,17 @@ public class PaidVacancy extends Fragment implements SwipeRefreshLayout.OnRefres
 
     @Override
     public void onRefresh() {
+        if(UserStatus.login && LoginPage.
+                loginResponseModel.
+                getUser().
+                getCustomer().
+                getJob_category().
+                size() != 0) {
+            this.volleyJsonArrayRequest(USER_VACANCY + LoginPage.loginResponseModel.getUser().getCustomer().getJob_category().get(0).getName());
+        }
+        else{
             this.volleyJsonArrayRequest(PAID_VACANCY_LIST);
+        }
 
     }
 

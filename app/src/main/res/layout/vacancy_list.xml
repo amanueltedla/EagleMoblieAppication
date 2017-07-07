@@ -12,7 +12,7 @@
         android:layout_width="50dp"
         android:layout_height="60dp"
         android:id="@+id/companyIcon"
-        android:src="@drawable/ford_logo"
+        android:src="@drawable/eagle_list_logo"
         android:layout_marginRight="15dp"
         android:layout_marginLeft="15dp"
         android:layout_gravity="center_vertical" />

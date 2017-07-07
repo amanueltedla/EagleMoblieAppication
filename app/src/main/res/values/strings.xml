@@ -9,6 +9,16 @@
         <item>Male</item>
         <item>Female</item>
     </string-array>
+    <string-array name="level">
+        <item>High School</item>
+        <item>Vocational</item>
+        <item>Diploma (Associate Degree)</item>
+        <item>Bachelors</item>
+        <item>Masters</item>
+        <item>Doctorate</item>
+        <item>Advanced Diploma</item>
+        <item>Other</item>
+    </string-array>
 
     <string-array name="aboutList">
         <item>Company Info</item>

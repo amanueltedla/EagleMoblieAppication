@@ -1,6 +1,7 @@
 package com.tedla.amanuel.eagleapp;
 
 
+import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -10,7 +11,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -37,9 +41,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 
@@ -60,6 +67,12 @@ public class Register extends Fragment implements View.OnClickListener {
     private EditText password;
     private EditText confirmPassword;
     private SignUpResponseModel responseModel;
+    private Spinner genderSpinner;
+    private Spinner levelSpinner;
+    private EditText experience;
+    private Calendar myCalendar;
+    private ProgressBar registerProgress;
+    private DatePickerDialog.OnDateSetListener date;
     private static final String SIGNUP_REQUEST_URL = BaseURL.baseUrl + "/users/signup";
     public Register() {
         // Required empty public constructor
@@ -72,12 +85,32 @@ public class Register extends Fragment implements View.OnClickListener {
         // Inflate the layout for this fragment
         ((MainActivity) getActivity()).setActionBarTitle("Register");
         View rootView = inflater.inflate(R.layout.fragment_register, container, false);
-        next = (Button) rootView.findViewById(R.id.nextButton);
+        myCalendar = Calendar.getInstance();
+
+        date = new DatePickerDialog.OnDateSetListener() {
+
+            @Override
+            public void onDateSet(DatePicker view, int year, int monthOfYear,
+                                  int dayOfMonth) {
+                myCalendar.set(Calendar.YEAR, year);
+                myCalendar.set(Calendar.MONTH, monthOfYear);
+                myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                updateLabel();
+            }
+
+        };
+        registerProgress = (ProgressBar) rootView.findViewById(R.id.registerProgress);
+        registerProgress.setVisibility(View.INVISIBLE);
+        genderSpinner = (Spinner) rootView.findViewById(R.id.genderSpinner);
+        levelSpinner = (Spinner) rootView.findViewById(R.id.levelSpinner);
+        experience = (EditText) rootView.findViewById(R.id.experience);
+        next = (Button) rootView.findViewById(R.id.nextbutton);
         userID = (EditText) rootView.findViewById(R.id.userID);
         firstName = (EditText) rootView.findViewById(R.id.firstName);
         lastName = (EditText) rootView.findViewById(R.id.lastName);
         email = (EditText) rootView.findViewById(R.id.email);
         birthDate = (EditText) rootView.findViewById(R.id.birthDate);
+        birthDate.setOnClickListener(this);
         //gender = (EditText) rootView.findViewById(R.id.gender);
         mobile = (EditText) rootView.findViewById(R.id.moblie);
         city = (EditText) rootView.findViewById(R.id.city);
@@ -91,7 +124,7 @@ public class Register extends Fragment implements View.OnClickListener {
 
     @Override
     public void onClick(View view) {
-        if (view.getId() == R.id.nextButton) {
+        if (view.getId() == R.id.nextbutton) {
             final UserModel userModel = new UserModel();
             userModel.setPassword(password.getText().toString());
             userModel.setUser_name(userID.getText().toString());
@@ -99,13 +132,35 @@ public class Register extends Fragment implements View.OnClickListener {
             userModel.setLast_name(lastName.getText().toString());
             userModel.setMobile(mobile.getText().toString());
             userModel.setUser_type("customer");
-//            try {
-//                RegisterUser(userModel);
-//            } catch (JSONException e) {
-//                e.printStackTrace();
-//            }
-            OpenCategoryChoice();
+            userModel.setEmail(email.getText().toString());
+            userModel.setDate_of_birth(birthDate.getText().toString());
+            userModel.setCity(city.getText().toString());
+            userModel.setCountry(country.getText().toString());
+            userModel.setMobile(mobile.getText().toString());
+            userModel.setGender(genderSpinner.getSelectedItem().toString());
+            userModel.setExprience(experience.getText().toString());
+            userModel.setLevel(levelSpinner.getSelectedItem().toString());
+            registerProgress.setVisibility(View.VISIBLE);
+            try {
+                RegisterUser(userModel);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
         }
+        else if(view.getId() == R.id.birthDate){
+            new DatePickerDialog(getActivity(), date, myCalendar
+                    .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
+                    myCalendar.get(Calendar.DAY_OF_MONTH)).show();
+        }
+    }
+
+    private void updateLabel() {
+
+        String myFormat = "MM/dd/yy"; //In which you need put here
+        SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
+
+        birthDate.setText(sdf.format(myCalendar.getTime()));
     }
 
     public void RegisterUser(final UserModel user) throws JSONException {
@@ -122,6 +177,7 @@ public class Register extends Fragment implements View.OnClickListener {
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
+                        registerProgress.setVisibility(View.INVISIBLE);
                         Toast.makeText(getActivity(),"Successful",Toast.LENGTH_LONG).show();
                         Gson gson = new Gson();
                         //Response response = gson.fromJson(yourJsonString, Response.class);
@@ -132,7 +188,8 @@ public class Register extends Fragment implements View.OnClickListener {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(getActivity(),BaseURL.networkErrorText,Toast.LENGTH_LONG).show();
+                        registerProgress.setVisibility(View.INVISIBLE);
+                        Toast.makeText(getActivity(),"Couldn't Register",Toast.LENGTH_LONG).show();
                     }
                 })
         {
@@ -150,7 +207,7 @@ public class Register extends Fragment implements View.OnClickListener {
 
     private void OpenCategoryChoice() {
         Intent intent = new Intent(getActivity(), CategoryChoice.class);
-        //intent.putExtra("CustomerID", responseModel.get_id());
+        intent.putExtra("CustomerID", responseModel.get_id());
         this.startActivity(intent);
     }
 }
