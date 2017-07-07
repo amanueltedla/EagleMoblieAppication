@@ -87,14 +87,14 @@ public class PaidVacancy extends Fragment implements SwipeRefreshLayout.OnRefres
 
         });
         setHasOptionsMenu(true);
-        this.volleyJsonArrayRequest(PAID_VACANCY_LIST);
+        //this.volleyJsonArrayRequest(PAID_VACANCY_LIST);
         return root;
 
     }
 
 
     private void openVacancyDetail(int position) {
-        dbHandler.updateSeenVacancy(db,vacancyModels.get(position).get_id());
+        dbHandler.updateSeenPaidVacancy(db,vacancyModels.get(position).get_id());
         Intent intent = new Intent(getActivity(), VacancyDetailAct.class);
         intent.putExtra("Vacancy", vacancyModels.get(position));
         this.startActivity(intent);
@@ -102,7 +102,7 @@ public class PaidVacancy extends Fragment implements SwipeRefreshLayout.OnRefres
 
     public void volleyJsonArrayRequest(String url) {
         vacancyModels.clear();
-        vacancyModels.addAll(dbHandler.getVacancy(db));
+        vacancyModels.addAll(dbHandler.getPaidVacancy(db));
         refreshListView();
         //progressDialog.setMessage("Loawsawaqqaing...");
         // progressDialog.show();
@@ -115,10 +115,10 @@ public class PaidVacancy extends Fragment implements SwipeRefreshLayout.OnRefres
                 //Response response = gson.fromJson(yourJsonString, Response.class);
                 try{
                     VacancyModel[] vacancyModelsarray = gson.fromJson(response.toString(), VacancyModel[].class);
-                    dbHandler.clearVacancy(db);
-                    dbHandler.insertVacancy(db, Arrays.asList(vacancyModelsarray));
+                    dbHandler.clearPaidVacancy(db);
+                    dbHandler.insertPaidVacancy(db, Arrays.asList(vacancyModelsarray));
                     vacancyModels.clear();
-                    vacancyModels.addAll(dbHandler.getVacancy(db));
+                    vacancyModels.addAll(dbHandler.getPaidVacancy(db));
                     refreshListView();
                 }
                 catch (Exception e){

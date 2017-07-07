@@ -93,14 +93,12 @@ public class FreeVacancy extends Fragment implements SwipeRefreshLayout.OnRefres
 
         });
         setHasOptionsMenu(true);
-        this.volleyJsonArrayRequest(OPEN_VACANCY_LIST);
-
         return rootView;
 
     }
 
     private void openVacancyDetail(int position) {
-        dbHandler.updateSeenVacancy(db,vacancyModels.get(position).get_id());
+        dbHandler.updateSeenFreeVacancy(db, vacancyModels.get(position).get_id());
         Intent intent = new Intent(getActivity(), VacancyDetailAct.class);
         intent.putExtra("Vacancy", vacancyModels.get(position));
         this.startActivity(intent);
@@ -108,7 +106,7 @@ public class FreeVacancy extends Fragment implements SwipeRefreshLayout.OnRefres
 
     public void volleyJsonArrayRequest(String url) {
         vacancyModels.clear();
-        vacancyModels.addAll(dbHandler.getVacancy(db));
+        vacancyModels.addAll(dbHandler.getFreeVacancy(db));
         refreshListView();
         //progressDialog.setMessage("Loawsawaqqaing...");
         // progressDialog.show();
@@ -121,10 +119,10 @@ public class FreeVacancy extends Fragment implements SwipeRefreshLayout.OnRefres
                 //Response response = gson.fromJson(yourJsonString, Response.class);
                 try{
                     VacancyModel[] vacancyModelsarray = gson.fromJson(response.toString(), VacancyModel[].class);
-                    dbHandler.clearVacancy(db);
-                    dbHandler.insertVacancy(db,Arrays.asList(vacancyModelsarray));
+                    dbHandler.clearFreeVacancy(db);
+                    dbHandler.insertFreeVacancy(db,Arrays.asList(vacancyModelsarray));
                     vacancyModels.clear();
-                    vacancyModels.addAll(dbHandler.getVacancy(db));
+                    vacancyModels.addAll(dbHandler.getFreeVacancy(db));
                     refreshListView();
                 }
                 catch (Exception e){
@@ -178,6 +176,16 @@ public class FreeVacancy extends Fragment implements SwipeRefreshLayout.OnRefres
             }
             @Override
             public boolean onQueryTextChange(String s) {
+                List<VacancyModel> searchedVModels = new ArrayList<>();
+                for(VacancyModel v:vacancyModels){
+                    if(v.getPosition().contains(s)){
+                        searchedVModels.add(v);
+                    }
+
+                }
+                vacancyModels.clear();
+                vacancyModels.addAll(searchedVModels);
+                refreshListView();
                 // UserFeedback.show( "SearchOnQueryTextChanged: " + s);
                 return false;
             }
@@ -188,21 +196,17 @@ public class FreeVacancy extends Fragment implements SwipeRefreshLayout.OnRefres
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-//        int i=1;
-//        for(VacancyModel vacancyModel:vacancyModels){
-//            TTS.speakWords("Vacancy " + i);
-//            TTS.speakWords("Position");
-//            TTS.speakWords(vacancyModel.getPosition());
-//            TTS.speakWords("Level");
-//            TTS.speakWords(vacancyModel.getLevel());
-//            TTS.speakWords("Category");
-//            TTS.speakWords(vacancyModel.getCategory());
-//            i++;
-//        }
-
-
-
-
+        int i=1;
+        for(VacancyModel vacancyModel:vacancyModels){
+            TTS.speakWords("Vacancy " + i);
+            TTS.speakWords("Position");
+            TTS.speakWords(vacancyModel.getPosition());
+            TTS.speakWords("Level");
+            TTS.speakWords(vacancyModel.getLevel());
+            TTS.speakWords("Category");
+            TTS.speakWords(vacancyModel.getCategory());
+            i++;
+        }
 
         return super.onOptionsItemSelected(item);
     }

@@ -29,7 +29,24 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("CREATE TABLE VACANCY ("
+        db.execSQL("CREATE TABLE FREE_VACANCY ("
+                + "_id TEXT PRIMARY KEY, "
+                + "CODE TEXT,"
+                + "POSITION TEXT,"
+                + "DESCRIPTION TEXT,"
+                + "EXPERIENCE TEXT,"
+                + "QUALIFICATIONS TEXT,"
+                + "STATUS TEXT,"
+                + "DUE_DATE TEXT,"
+                + "SALARY TEXT,"
+                + "NUMBER_REQUIRED TEXT,"
+                + "CONTACT TEXT,"
+                + "MOBILE TEXT,"
+                + "EMAIL TEXT,"
+                + "LEVEL TEXT,"
+                + "SEEN INTEGER,"
+                + "CATEGORY TEXT);");
+        db.execSQL("CREATE TABLE PAID_VACANCY ("
                 + "_id TEXT PRIMARY KEY, "
                 + "CODE TEXT,"
                 + "POSITION TEXT,"
@@ -128,7 +145,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.insert("VACANCY", null,MeterFileValues);
     }
 
-    public static void insertVacancy(SQLiteDatabase db,List<VacancyModel> vacancyModels){
+    public static void insertFreeVacancy(SQLiteDatabase db,List<VacancyModel> vacancyModels){
         for(VacancyModel vm:vacancyModels) {
             ContentValues MeterFileValues = new ContentValues();
             MeterFileValues.put("_id", vm.get_id());
@@ -147,7 +164,30 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             MeterFileValues.put("LEVEL", vm.getLevel());
             MeterFileValues.put("SEEN", vm.getSeen());
             MeterFileValues.put("CATEGORY", vm.getCategory());
-            db.insert("VACANCY", null, MeterFileValues);
+            db.insert("FREE_VACANCY", null, MeterFileValues);
+        }
+    }
+
+    public static void insertPaidVacancy(SQLiteDatabase db,List<VacancyModel> vacancyModels){
+        for(VacancyModel vm:vacancyModels) {
+            ContentValues MeterFileValues = new ContentValues();
+            MeterFileValues.put("_id", vm.get_id());
+            MeterFileValues.put("CODE", vm.getCode());
+            MeterFileValues.put("POSITION", vm.getPosition());
+            MeterFileValues.put("DESCRIPTION", vm.getDescription());
+            MeterFileValues.put("EXPERIENCE", vm.getExprience());
+            MeterFileValues.put("QUALIFICATIONS", vm.getQualifications());
+            MeterFileValues.put("STATUS", vm.getStatus());
+            MeterFileValues.put("DUE_DATE", vm.getDue_date());
+            MeterFileValues.put("SALARY", vm.getSalary());
+            MeterFileValues.put("NUMBER_REQUIRED", vm.getNumber_required());
+            MeterFileValues.put("CONTACT", vm.getContact());
+            MeterFileValues.put("MOBILE", vm.getMobile());
+            MeterFileValues.put("EMAIL", vm.getEmail());
+            MeterFileValues.put("LEVEL", vm.getLevel());
+            MeterFileValues.put("SEEN", vm.getSeen());
+            MeterFileValues.put("CATEGORY", vm.getCategory());
+            db.insert("PAID_VACANCY", null, MeterFileValues);
         }
     }
    public List<NewsModel> getNews(SQLiteDatabase db){
@@ -170,8 +210,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
        return  newsModels;
 
    }
-    public List<VacancyModel>  getVacancy(SQLiteDatabase db) {
-        Cursor cursor = db.query("VACANCY",
+    public List<VacancyModel>  getFreeVacancy(SQLiteDatabase db) {
+        Cursor cursor = db.query("FREE_VACANCY",
                 new String[]{"_id"
                         , "CODE"
                         , "POSITION"
@@ -217,8 +257,61 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         }
         return vacancyModels;
     }
-    public static void clearVacancy(SQLiteDatabase db){
-        db.execSQL("delete from "+ "VACANCY");
+
+    public List<VacancyModel>  getPaidVacancy(SQLiteDatabase db) {
+        Cursor cursor = db.query("PAID_VACANCY",
+                new String[]{"_id"
+                        , "CODE"
+                        , "POSITION"
+                        , "DESCRIPTION"
+                        , "EXPERIENCE"
+                        , "QUALIFICATIONS"
+                        , "STATUS"
+                        , "DUE_DATE"
+                        , "SALARY"
+                        , "NUMBER_REQUIRED"
+                        , "CONTACT"
+                        , "MOBILE"
+                        , "EMAIL"
+                        , "LEVEL"
+                        , "SEEN"
+                        , "CATEGORY"},
+                null,
+                null,
+                null, null, null);
+        List<VacancyModel> vacancyModels = new ArrayList<>();
+        if (cursor.moveToFirst()) {
+            for (int k = 0; k < cursor.getCount(); k++) {
+                VacancyModel vacancyModel = new VacancyModel();
+                vacancyModel.set_id(cursor.getString(0));
+                vacancyModel.setCode(cursor.getString(1));
+                vacancyModel.setPosition(cursor.getString(2));
+                vacancyModel.setDescription(cursor.getString(3));
+                vacancyModel.setExprience(cursor.getString(4));
+                vacancyModel.setQualifications(cursor.getString(5));
+                vacancyModel.setStatus(cursor.getString(6));
+                vacancyModel.setDue_date(cursor.getString(7));
+                vacancyModel.setSalary(cursor.getString(8));
+                vacancyModel.setNumber_required(cursor.getString(9));
+                vacancyModel.setContact(cursor.getString(10));
+                vacancyModel.setMobile(cursor.getString(11));
+                vacancyModel.setEmail(cursor.getString(12));
+                vacancyModel.setLevel(cursor.getString(13));
+                vacancyModel.setSeen(cursor.getInt(14));
+                vacancyModel.setCategory(cursor.getString(15));
+                vacancyModels.add(vacancyModel);
+                cursor.moveToNext();
+            }
+        }
+        return vacancyModels;
+    }
+
+    public static void clearPaidVacancy(SQLiteDatabase db){
+        db.execSQL("delete from "+ "PAID_VACANCY");
+    }
+
+    public static void clearFreeVacancy(SQLiteDatabase db){
+        db.execSQL("delete from "+ "FREE_VACANCY");
     }
     public static void clearUser(SQLiteDatabase db){
         db.execSQL("delete from "+ "USER");
@@ -228,10 +321,18 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
 
 
-    public static void updateSeenVacancy(SQLiteDatabase db, String vacancyID){
+    public static void updateSeenFreeVacancy(SQLiteDatabase db, String vacancyID){
         ContentValues vacancyUpdate = new ContentValues();
         vacancyUpdate.put("SEEN",1);
-        db.update("VACANCY",
+        db.update("FREE_VACANCY",
+                vacancyUpdate,
+                "_id = ?",
+                new String[]{vacancyID});
+    }
+    public static void updateSeenPaidVacancy(SQLiteDatabase db, String vacancyID){
+        ContentValues vacancyUpdate = new ContentValues();
+        vacancyUpdate.put("SEEN",1);
+        db.update("PAID_VACANCY",
                 vacancyUpdate,
                 "_id = ?",
                 new String[] {vacancyID});
