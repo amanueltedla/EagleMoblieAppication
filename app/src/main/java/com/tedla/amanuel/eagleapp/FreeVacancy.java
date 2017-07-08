@@ -196,16 +196,18 @@ public class FreeVacancy extends Fragment implements SwipeRefreshLayout.OnRefres
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        int i=1;
-        for(VacancyModel vacancyModel:vacancyModels){
-            TTS.speakWords("Vacancy " + i);
-            TTS.speakWords("Position");
-            TTS.speakWords(vacancyModel.getPosition());
-            TTS.speakWords("Level");
-            TTS.speakWords(vacancyModel.getLevel());
-            TTS.speakWords("Category");
-            TTS.speakWords(vacancyModel.getCategory());
-            i++;
+        if(item.getItemId() == R.id.action_narration) {
+            int i = 1;
+            for (VacancyModel vacancyModel : vacancyModels) {
+                TTS.speakWords("Vacancy " + i);
+                TTS.speakWords("Position");
+                TTS.speakWords(vacancyModel.getPosition());
+                TTS.speakWords("Level");
+                TTS.speakWords(vacancyModel.getLevel());
+                TTS.speakWords("Category");
+                TTS.speakWords(vacancyModel.getCategory());
+                i++;
+            }
         }
 
         return super.onOptionsItemSelected(item);
