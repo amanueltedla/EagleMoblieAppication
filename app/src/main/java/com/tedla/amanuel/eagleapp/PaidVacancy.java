@@ -178,17 +178,17 @@ public class PaidVacancy extends Fragment implements SwipeRefreshLayout.OnRefres
 
     @Override
     public void onRefresh() {
-        if(UserStatus.login && LoginPage.
-                loginResponseModel.
-                getUser().
-                getCustomer().
-                getJob_category().
-                size() != 0) {
-            this.volleyJsonArrayRequest(USER_VACANCY + LoginPage.loginResponseModel.getUser().getCustomer().getJob_category().get(0).getName());
-        }
-        else{
+//        if(UserStatus.login && LoginPage.
+//                loginResponseModel.
+//                getUser().
+//                getCustomer().
+//                getJob_category().
+//                size() != 0) {
+//            this.volleyJsonArrayRequest(USER_VACANCY + LoginPage.loginResponseModel.getUser().getCustomer().getJob_category().get(0).getName());
+//        }
+//        else{
             this.volleyJsonArrayRequest(PAID_VACANCY_LIST);
-        }
+//        }
 
     }
 

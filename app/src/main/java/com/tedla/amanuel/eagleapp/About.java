@@ -54,6 +54,10 @@ public class About extends Fragment {
             Intent intent = new Intent(getActivity(), CompanyInfo.class);
             this.startActivity(intent);
         }
+        else if(position == 1){
+            Intent intent = new Intent(getActivity(), ContactUs.class);
+            this.startActivity(intent);
+        }
 
     }
 
