@@ -171,7 +171,18 @@ public class PaidVacancy extends Fragment implements SwipeRefreshLayout.OnRefres
     }
 
 
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
 
+        if (isVisibleToUser)
+            Log.d("MyFragment", "Fragment is visible.");
+        else{
+        if(TTS.myTTS !=null){
+            TTS.myTTS.stop();
+        }
+        }
+    }
     private void refreshListView() {
         vacancyListAdapter.notifyDataSetChanged();
     }

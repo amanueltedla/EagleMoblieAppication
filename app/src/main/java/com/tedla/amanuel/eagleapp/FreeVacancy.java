@@ -195,6 +195,19 @@ public class FreeVacancy extends Fragment implements SwipeRefreshLayout.OnRefres
     }
 
     @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+
+        if (isVisibleToUser)
+            Log.d("MyFragment", "Fragment is visible.");
+        else{
+            if(TTS.myTTS !=null){
+                TTS.myTTS.stop();
+            }
+        }
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if(item.getItemId() == R.id.action_narration) {
             int i = 1;
