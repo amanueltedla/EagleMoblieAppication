@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -85,6 +86,7 @@ public class Register extends Fragment implements View.OnClickListener {
         // Inflate the layout for this fragment
         ((MainActivity) getActivity()).setActionBarTitle("Register");
         View rootView = inflater.inflate(R.layout.fragment_register, container, false);
+        setHasOptionsMenu(true);
         myCalendar = Calendar.getInstance();
 
         date = new DatePickerDialog.OnDateSetListener() {
@@ -204,7 +206,11 @@ public class Register extends Fragment implements View.OnClickListener {
     }
 
 
-
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        menu.findItem(R.id.action_search).setVisible(false);
+        super.onPrepareOptionsMenu(menu);
+    }
     private void OpenCategoryChoice() {
         Intent intent = new Intent(getActivity(), CategoryChoice.class);
         intent.putExtra("CustomerID", responseModel.get_id());

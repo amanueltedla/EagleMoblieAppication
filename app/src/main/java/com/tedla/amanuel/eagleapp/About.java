@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -32,6 +33,7 @@ public class About extends Fragment {
         // Inflate the layout for this fragment
         ((MainActivity) getActivity()).setActionBarTitle("About");
         View root = inflater.inflate(R.layout.fragment_about, container, false);
+        setHasOptionsMenu(true);
         aboutList = (ListView) root.findViewById(R.id.aboutList);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),
                 android.R.layout.simple_list_item_1, getResources().getStringArray(R.array.aboutList));
@@ -59,6 +61,11 @@ public class About extends Fragment {
             this.startActivity(intent);
         }
 
+    }
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        menu.findItem(R.id.action_search).setVisible(false);
+        super.onPrepareOptionsMenu(menu);
     }
 
 }

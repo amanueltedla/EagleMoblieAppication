@@ -10,6 +10,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -57,6 +58,7 @@ public class News extends Fragment implements SwipeRefreshLayout.OnRefreshListen
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_news, container, false);
+        setHasOptionsMenu(true);
         ((MainActivity) getActivity()).setActionBarTitle("News");
         try {
             dbHandler = new DatabaseHandler(getActivity());
@@ -151,5 +153,11 @@ public class News extends Fragment implements SwipeRefreshLayout.OnRefreshListen
     @Override
     public void onRefresh() {
         this.newsRequest();
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        menu.findItem(R.id.action_search).setVisible(false);
+        super.onPrepareOptionsMenu(menu);
     }
 }

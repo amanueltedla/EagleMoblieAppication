@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -45,6 +46,7 @@ public class Comment extends Fragment implements View.OnClickListener{
         // Inflate the layout for this fragment
         ((MainActivity) getActivity()).setActionBarTitle("Comment");
         View root = inflater.inflate(R.layout.fragment_comment, container, false);
+        setHasOptionsMenu(true);
         comment = (EditText) root.findViewById(R.id.commentText);
         submitt = (Button) root.findViewById(R.id.submitButton);
         submitt.setOnClickListener(this);
@@ -91,5 +93,10 @@ public class Comment extends Fragment implements View.OnClickListener{
         if(v.getId() == R.id.submitButton){
 
         }
+    }
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        menu.findItem(R.id.action_search).setVisible(false);
+        super.onPrepareOptionsMenu(menu);
     }
 }
