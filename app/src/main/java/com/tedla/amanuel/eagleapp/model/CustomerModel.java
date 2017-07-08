@@ -8,7 +8,16 @@ import java.util.List;
 public class CustomerModel {
     private String _id;
     private String profile;
-    private List<JobCategoryModel> job_category;
+
+    public List<String> getJob_category() {
+        return job_category;
+    }
+
+    public void setJob_category(List<String> job_category) {
+        this.job_category = job_category;
+    }
+
+    private List<String> job_category;
 
     public String getProfile() {
         return profile;
@@ -26,13 +35,7 @@ public class CustomerModel {
         this._id = _id;
     }
 
-    public List<JobCategoryModel> getJob_category() {
-        return job_category;
-    }
 
-    public void setJob_category(List<JobCategoryModel> job_category) {
-        this.job_category = job_category;
-    }
 
 
 }

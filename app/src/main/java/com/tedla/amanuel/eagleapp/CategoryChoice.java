@@ -206,7 +206,7 @@ public class CategoryChoice extends AppCompatActivity implements View.OnClickLis
             int states[][] = {{android.R.attr.state_checked}, {}};
             int colors[] = {Color.parseColor("#fd7f45"), Color.BLACK};
             CompoundButtonCompat.setButtonTintList(checkBox, new ColorStateList(states, colors));
-            checkBox.setTag(jobCategoryModels.get(i).get_id());
+            checkBox.setTag(jobCategoryModels.get(i).getName());
             checkBoxes.add(checkBox);
         }
     }
