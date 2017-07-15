@@ -61,10 +61,8 @@ public class Register extends Fragment implements View.OnClickListener {
     private EditText lastName;
     private EditText email;
     private EditText birthDate;
-    private EditText gender;
     private EditText mobile;
     private EditText city;
-    private EditText country;
     private EditText password;
     private EditText confirmPassword;
     private SignUpResponseModel responseModel;
@@ -116,7 +114,6 @@ public class Register extends Fragment implements View.OnClickListener {
         //gender = (EditText) rootView.findViewById(R.id.gender);
         mobile = (EditText) rootView.findViewById(R.id.moblie);
         city = (EditText) rootView.findViewById(R.id.city);
-        country = (EditText) rootView.findViewById(R.id.country);
         password = (EditText) rootView.findViewById(R.id.password);
         confirmPassword = (EditText) rootView.findViewById(R.id.confirmPassword);
         next.setOnClickListener(this);
@@ -137,7 +134,6 @@ public class Register extends Fragment implements View.OnClickListener {
             userModel.setEmail(email.getText().toString());
             userModel.setDate_of_birth(birthDate.getText().toString());
             userModel.setCity(city.getText().toString());
-            userModel.setCountry(country.getText().toString());
             userModel.setMobile(mobile.getText().toString());
             userModel.setGender(genderSpinner.getSelectedItem().toString());
             userModel.setExprience(experience.getText().toString());
