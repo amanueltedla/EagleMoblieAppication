@@ -80,7 +80,7 @@ public class FreeVacancy extends Fragment implements SwipeRefreshLayout.OnRefres
         swipeLayout.setOnRefreshListener(this);
         swipeLayout.setColorSchemeColors(Color.parseColor("#fd7f45"));
         vacancyModels = new ArrayList<>();
-
+        populateListViewFromDataBase();
         vacancyListView = (ListView) rootView.findViewById(R.id.vacancyListView);
         vacancyListAdapter = new VacancyListAdapter(getActivity(), vacancyModels);
         vacancyListView.setAdapter(vacancyListAdapter);
@@ -95,6 +95,11 @@ public class FreeVacancy extends Fragment implements SwipeRefreshLayout.OnRefres
         setHasOptionsMenu(true);
         return rootView;
 
+    }
+
+    private void populateListViewFromDataBase(){
+        vacancyModels.clear();
+        vacancyModels.addAll(dbHandler.getPaidVacancy(db));
     }
 
     private void openVacancyDetail(int position) {
@@ -165,17 +170,18 @@ public class FreeVacancy extends Fragment implements SwipeRefreshLayout.OnRefres
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                Toast.makeText(getActivity(),query,Toast.LENGTH_LONG).show();
+
                 // Toast like print
                 //UserFeedback.show( "SearchOnQueryTextSubmit: " + query);
-                if( ! searchView.isIconified()) {
-                    searchView.setIconified(true);
-                }
-                myActionMenuItem.collapseActionView();
+//                if( ! searchView.isIconified()) {
+//                    searchView.setIconified(true);
+//                }
+                //myActionMenuItem.collapseActionView();
                 return false;
             }
             @Override
             public boolean onQueryTextChange(String s) {
+                populateListViewFromDataBase();
                 List<VacancyModel> searchedVModels = new ArrayList<>();
                 for(VacancyModel v:vacancyModels){
                     if(v.getPosition().contains(s)){
@@ -190,7 +196,9 @@ public class FreeVacancy extends Fragment implements SwipeRefreshLayout.OnRefres
                 return false;
             }
         });
-
+                if( ! searchView.isIconified()) {
+                    searchView.setIconified(true);
+                }
         super.onCreateOptionsMenu(menu, inflater);
     }
 

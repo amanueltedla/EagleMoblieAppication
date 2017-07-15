@@ -329,7 +329,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 "_id = ?",
                 new String[]{vacancyID});
     }
-    public static void updateSeenPaidVacancy(SQLiteDatabase db, String vacancyID){
+    public static void  updateSeenPaidVacancy(SQLiteDatabase db, String vacancyID){
         ContentValues vacancyUpdate = new ContentValues();
         vacancyUpdate.put("SEEN",1);
         db.update("PAID_VACANCY",
