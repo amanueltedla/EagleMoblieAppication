@@ -26,6 +26,7 @@ public class HomeTab extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        ((MainActivity) getActivity()).setActionBarTitle("Vacancy");
         View root = inflater.inflate(R.layout.fragment_home_tab, container, false);
         tabLayout = (TabLayout) root.findViewById(R.id.tabs);
         viewPager = (ViewPager) root.findViewById(R.id.view_pager);
@@ -34,4 +35,11 @@ public class HomeTab extends Fragment {
         return root;
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        if(TTS.myTTS !=null){
+            TTS.myTTS.stop();
+        }
+    }
 }

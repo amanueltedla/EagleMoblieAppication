@@ -8,8 +8,11 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,12 +54,48 @@ public class PaidVacancy extends Fragment implements SwipeRefreshLayout.OnRefres
     private SwipeRefreshLayout swipeLayout;
     private SQLiteDatabase db;
     private DatabaseHandler dbHandler;
+    private SearchView searchView;
 
     public PaidVacancy() {
         // Required empty public constructor
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        final MenuItem myActionMenuItem = menu.findItem( R.id.action_search);
+        searchView = (SearchView) myActionMenuItem.getActionView();
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
 
+                // Toast like print
+                //UserFeedback.show( "SearchOnQueryTextSubmit: " + query);
+                if( ! searchView.isIconified()) {
+                    searchView.setIconified(true);
+                }
+               // myActionMenuItem.collapseActionView();
+                return false;
+            }
+            @Override
+            public boolean onQueryTextChange(String s) {
+                populateListViewFromDataBase();
+                List<VacancyModel> searchedVModels = new ArrayList<>();
+                for(VacancyModel v:vacancyModels){
+                    if(v.getPosition().contains(s)){
+                        searchedVModels.add(v);
+                    }
+
+                }
+                vacancyModels.clear();
+                vacancyModels.addAll(searchedVModels);
+                refreshListView();
+                // UserFeedback.show( "SearchOnQueryTextChanged: " + s);
+                return false;
+            }
+        });
+
+        super.onCreateOptionsMenu(menu, inflater);
+    }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -75,7 +114,7 @@ public class PaidVacancy extends Fragment implements SwipeRefreshLayout.OnRefres
         swipeLayout.setOnRefreshListener(this);
         swipeLayout.setColorSchemeColors(Color.parseColor("#fd7f45"));
         vacancyModels = new ArrayList<>();
-
+        populateListViewFromDataBase();
         vacancyListView = (ListView) root.findViewById(R.id.vacancyListView);
         vacancyListAdapter = new VacancyListAdapter(getActivity(), vacancyModels);
         vacancyListView.setAdapter(vacancyListAdapter);
@@ -92,18 +131,20 @@ public class PaidVacancy extends Fragment implements SwipeRefreshLayout.OnRefres
         return root;
 
     }
-
+    private void populateListViewFromDataBase(){
+        vacancyModels.clear();
+        vacancyModels.addAll(dbHandler.getPaidVacancy(db));
+    }
 
     private void openVacancyDetail(int position) {
-        dbHandler.updateSeenPaidVacancy(db,vacancyModels.get(position).get_id());
+        dbHandler.updateSeenPaidVacancy(db, vacancyModels.get(position).get_id());
         Intent intent = new Intent(getActivity(), VacancyDetailAct.class);
         intent.putExtra("Vacancy", vacancyModels.get(position));
         this.startActivity(intent);
     }
 
     public void volleyJsonArrayRequest(String url) {
-        vacancyModels.clear();
-        vacancyModels.addAll(dbHandler.getPaidVacancy(db));
+        populateListViewFromDataBase();
         refreshListView();
         //progressDialog.setMessage("Loawsawaqqaing...");
         // progressDialog.show();
@@ -118,8 +159,7 @@ public class PaidVacancy extends Fragment implements SwipeRefreshLayout.OnRefres
                     VacancyModel[] vacancyModelsarray = gson.fromJson(response.toString(), VacancyModel[].class);
                     dbHandler.clearPaidVacancy(db);
                     dbHandler.insertPaidVacancy(db, Arrays.asList(vacancyModelsarray));
-                    vacancyModels.clear();
-                    vacancyModels.addAll(dbHandler.getPaidVacancy(db));
+                    populateListViewFromDataBase();
                     refreshListView();
                 }
                 catch (Exception e){
@@ -156,16 +196,18 @@ public class PaidVacancy extends Fragment implements SwipeRefreshLayout.OnRefres
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        int i=1;
-        for(VacancyModel vacancyModel:vacancyModels){
-            TTS.speakWords("Vacancy " + i);
-            TTS.speakWords("Position");
-            TTS.speakWords(vacancyModel.getPosition());
-            TTS.speakWords("Level");
-            TTS.speakWords(vacancyModel.getLevel());
-            TTS.speakWords("Category");
-            TTS.speakWords(vacancyModel.getCategory());
-            i++;
+        if(item.getItemId() == R.id.action_narration) {
+            int i = 1;
+            for (VacancyModel vacancyModel : vacancyModels) {
+                TTS.speakWords("Vacancy " + i);
+                TTS.speakWords("Position");
+                TTS.speakWords(vacancyModel.getPosition());
+                TTS.speakWords("Level");
+                TTS.speakWords(vacancyModel.getLevel());
+                TTS.speakWords("Category");
+                TTS.speakWords(vacancyModel.getCategory());
+                i++;
+            }
         }
         return super.onOptionsItemSelected(item);
     }
