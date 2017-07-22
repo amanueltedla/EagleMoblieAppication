@@ -18,11 +18,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.GridLayout;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -62,7 +64,10 @@ import java.util.Map;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class Register extends Fragment implements View.OnClickListener {
+public class Register extends Fragment implements View.OnClickListener,CompoundButton.OnCheckedChangeListener {
+    private static final int LEVELONEPRICE = 30;
+    private static final int LEVELTWOPRICE = 40;
+    private static final int LEVELTHREEPRICE = 50;
     private Button next;
     private EditText userID;
     private EditText firstName;
@@ -73,11 +78,14 @@ public class Register extends Fragment implements View.OnClickListener {
     private EditText city;
     private EditText password;
     private EditText confirmPassword;
+    private EditText categoryChoiceText;
     private SignUpResponseModel responseModel;
     private Spinner genderSpinner;
     private Spinner levelSpinner;
     private EditText experience;
     private Calendar myCalendar;
+    private Button dialogSubmitButton;
+    private ProgressBar categoryDialogProgress;
     private ProgressBar registerProgress;
     private DatePickerDialog.OnDateSetListener date;
     private static final String SIGNUP_REQUEST_URL = BaseURL.baseUrl + "/users/signup";
@@ -87,10 +95,11 @@ public class Register extends Fragment implements View.OnClickListener {
     private static final int columnCount = 1;
     private List<CheckBox> checkBoxes;
     private Dialog dialog;
+    private TextView selectedText;
+    int categoryCount = 0;
     public Register() {
         // Required empty public constructor
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -117,6 +126,10 @@ public class Register extends Fragment implements View.OnClickListener {
             }
 
         };
+        selectedText = (TextView) dialog.findViewById(R.id.selectedText);
+        dialogSubmitButton = (Button) dialog.findViewById(R.id.submitButton);
+        dialogSubmitButton.setOnClickListener(this);
+        categoryDialogProgress = (ProgressBar)  dialog.findViewById(R.id.categoryProgress);
         registerProgress = (ProgressBar) rootView.findViewById(R.id.registerProgress);
         registerProgress.setVisibility(View.INVISIBLE);
         genderSpinner = (Spinner) rootView.findViewById(R.id.genderSpinner);
@@ -129,7 +142,8 @@ public class Register extends Fragment implements View.OnClickListener {
         email = (EditText) rootView.findViewById(R.id.email);
         birthDate = (EditText) rootView.findViewById(R.id.birthDate);
         birthDate.setOnClickListener(this);
-        //gender = (EditText) rootView.findViewById(R.id.gender);
+        categoryChoiceText = (EditText) rootView.findViewById(R.id.categoryChoiceInput);
+        categoryChoiceText.setOnClickListener(this);
         mobile = (EditText) rootView.findViewById(R.id.moblie);
         city = (EditText) rootView.findViewById(R.id.city);
         password = (EditText) rootView.findViewById(R.id.password);
@@ -138,61 +152,50 @@ public class Register extends Fragment implements View.OnClickListener {
         return rootView;
     }
 
-
     @Override
     public void onClick(View view) {
         if (view.getId() == R.id.nextbutton) {
-//            final UserModel userModel = new UserModel();
-//            userModel.setPassword(password.getText().toString());
-//            userModel.setUser_name(userID.getText().toString());
-//            userModel.setFirst_name(firstName.getText().toString());
-//            userModel.setLast_name(lastName.getText().toString());
-//            userModel.setMobile(mobile.getText().toString());
-//            userModel.setUser_type("customer");
-//            userModel.setEmail(email.getText().toString());
-//            userModel.setDate_of_birth(birthDate.getText().toString());
-//            userModel.setCity(city.getText().toString());
-//            userModel.setMobile(mobile.getText().toString());
-//            userModel.setGender(genderSpinner.getSelectedItem().toString());
-//            userModel.setExprience(experience.getText().toString());
-//            userModel.setLevel(levelSpinner.getSelectedItem().toString());
-//            registerProgress.setVisibility(View.VISIBLE);
-//            try {
-//                RegisterUser(userModel);
-//            } catch (JSONException e) {
-//                e.printStackTrace();
-//            }
-
-            // custom dialog
-
-
-            dialog.setTitle("Choose Job Categories");
-            categoriesRequest();
-//            // set the custom dialog components - text, image and button
-//            TextView text = (TextView) dialog.findViewById(R.id.text);
-//            text.setText("Android custom dialog example!");
-//            ImageView image = (ImageView) dialog.findViewById(R.id.image);
-//            image.setImageResource(R.drawable.ic_launcher);
-//
-//            Button dialogButton = (Button) dialog.findViewById(R.id.dialogButtonOK);
-//            // if button is clicked, close the custom dialog
-//            dialogButton.setOnClickListener(new OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    dialog.dismiss();
-//                }
-//            });
-
-            dialog.show();
-
+            final UserModel userModel = new UserModel();
+            userModel.setPassword(password.getText().toString());
+            userModel.setUser_name(userID.getText().toString());
+            userModel.setFirst_name(firstName.getText().toString());
+            userModel.setLast_name(lastName.getText().toString());
+            userModel.setMobile(mobile.getText().toString());
+            userModel.setUser_type("customer");
+            userModel.setEmail(email.getText().toString());
+            userModel.setDate_of_birth(birthDate.getText().toString());
+            userModel.setCity(city.getText().toString());
+            userModel.setMobile(mobile.getText().toString());
+            userModel.setGender(genderSpinner.getSelectedItem().toString());
+            userModel.setExprience(experience.getText().toString());
+            userModel.setLevel(levelSpinner.getSelectedItem().toString());
+            registerProgress.setVisibility(View.VISIBLE);
+            try {
+                RegisterUser(userModel);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
         else if(view.getId() == R.id.birthDate){
             new DatePickerDialog(getActivity(), date, myCalendar
                     .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
                     myCalendar.get(Calendar.DAY_OF_MONTH)).show();
         }
-    }
+        else if(view.getId() == R.id.categoryChoiceInput){
+            dialog.setTitle("Choose Job Categories");
+            categoriesRequest();
+            selectedText.setText("Selected: 0   Amount: 0 Birr/2 Months");
+            categoryCount = 0;
+            dialogSubmitButton.setVisibility(View.INVISIBLE);
+            categoryDialogProgress.setVisibility(View.VISIBLE);
+            dialog.show();
+        }
+        else if(view.getId() == R.id.submitButton){
+            categoryChoiceText.setText("Job Categories: "+categoryCount);
+            dialog.dismiss();
+        }
 
+    }
 
     public void categoriesRequest() {
         JsonArrayRequest getRequest = new JsonArrayRequest(Request.Method.GET, CATEGORIES_REQUEST_URL, null, new Response.Listener<JSONArray>() {
@@ -207,6 +210,8 @@ public class Register extends Fragment implements View.OnClickListener {
                     jobCategoryModels.clear();
                     jobCategoryModels.addAll(Arrays.asList(jobCategoryModels2));
                     setupCheckboxes();
+                    dialogSubmitButton.setVisibility(View.VISIBLE);
+                    categoryDialogProgress.setVisibility(View.INVISIBLE);
                     //register.setVisibility(View.VISIBLE);
                 } catch (Exception e) {
                     Toast.makeText(getActivity(), e.toString(), Toast.LENGTH_SHORT).show();
@@ -219,24 +224,14 @@ public class Register extends Fragment implements View.OnClickListener {
                     public void onErrorResponse(VolleyError error) {
                         //categoryProgress.setVisibility(View.INVISIBLE);
                         Toast.makeText(getActivity(), error.toString(), Toast.LENGTH_SHORT).show();
+                        categoryDialogProgress.setVisibility(View.INVISIBLE);
                     }
                 }) {
-//            @Override
-//            public Map<String, String> getHeaders() throws AuthFailureError {
-//                Map<String, String> headers = new HashMap<>();
-//                String auth = "Bearer " + LoginPage.loginResponseModel.getToken();
-//                headers.put("Content-Type", "application/json");
-//                headers.put("Authorization", auth);
-//                return headers;
-//            }
-
         };
 
         // Adding JsonObject request to request queue
         AppSingleton.getInstance(getActivity()).addToRequestQueue(getRequest, CATEGORIES_REQUEST_URL);
     }
-
-
 
     private void updateLabel() {
 
@@ -263,7 +258,6 @@ public class Register extends Fragment implements View.OnClickListener {
                         registerProgress.setVisibility(View.INVISIBLE);
                         Toast.makeText(getActivity(),"Successful",Toast.LENGTH_LONG).show();
                         Gson gson = new Gson();
-                        //Response response = gson.fromJson(yourJsonString, Response.class);
                         responseModel = gson.fromJson(response.toString(), SignUpResponseModel.class);
                         OpenCategoryChoice();
                     }
@@ -278,11 +272,6 @@ public class Register extends Fragment implements View.OnClickListener {
         {
 
         };
-//        request.setRetryPolicy(new
-//
-//                DefaultRetryPolicy(60000,
-//                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
-//                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         AppSingleton.getInstance(getActivity()).addToRequestQueue(request, SIGNUP_REQUEST_URL);
     }
 
@@ -307,7 +296,6 @@ public class Register extends Fragment implements View.OnClickListener {
         CheckBox checkBox;
         checkBoxes.clear();
         for (int i = 0; i < jobCategoryModels.size(); i++) {
-
             checkBox = new CheckBox(getActivity());
             checkBox.setText(jobCategoryModels.get(i).getName());
             checkBox.setTextColor(Color.BLACK);
@@ -325,7 +313,40 @@ public class Register extends Fragment implements View.OnClickListener {
             int colors[] = {Color.parseColor("#fd7f45"), Color.BLACK};
             CompoundButtonCompat.setButtonTintList(checkBox, new ColorStateList(states, colors));
             checkBox.setTag(jobCategoryModels.get(i).getName());
+            checkBox.setOnCheckedChangeListener(this);
             checkBoxes.add(checkBox);
         }
+    }
+
+    @Override
+    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        changeDialogText();
+    }
+
+    private void changeDialogText() {
+
+        categoryCount = 0;
+        for (CheckBox checkBox : checkBoxes) {
+
+            if (checkBox.isChecked()) {
+                categoryCount++;
+                if(categoryCount > 5){
+                    Toast.makeText(getActivity(),"Reached maximum Limit",Toast.LENGTH_LONG).show();
+                }
+            }
+        }
+
+      if(categoryCount ==0){
+         selectedText.setText("Selected: 0   Amount: 0 Birr/2 Months");
+      }
+      else if(categoryCount == 1){
+          selectedText.setText("Selected: "+ categoryCount +"   Amount: "+ LEVELONEPRICE +" Birr/2 Months");
+      }
+      else if(categoryCount == 2 || categoryCount == 3){
+          selectedText.setText("Selected: "+ categoryCount +"   Amount: "+ LEVELTWOPRICE +" Birr/2 Months");
+      }
+      else if(categoryCount == 4 || categoryCount == 5){
+          selectedText.setText("Selected: "+ categoryCount +"   Amount: "+ LEVELTHREEPRICE +" Birr/2 Months");
+      }
     }
 }
