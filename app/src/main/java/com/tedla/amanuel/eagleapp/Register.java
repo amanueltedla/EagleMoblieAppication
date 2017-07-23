@@ -40,6 +40,7 @@ import com.android.volley.toolbox.StringRequest;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.tedla.amanuel.eagleapp.model.AddCategoryModel;
 import com.tedla.amanuel.eagleapp.model.BaseURL;
 import com.tedla.amanuel.eagleapp.model.JobCategoryModel;
 import com.tedla.amanuel.eagleapp.model.SignUpResponseModel;
@@ -90,6 +91,7 @@ public class Register extends Fragment implements View.OnClickListener,CompoundB
     private DatePickerDialog.OnDateSetListener date;
     private static final String SIGNUP_REQUEST_URL = BaseURL.baseUrl + "/users/signup";
     private static final String CATEGORIES_REQUEST_URL = BaseURL.baseUrl + "/jobcategories";
+    private static final String ADD_CATEGORY_REQUEST_URL = BaseURL.baseUrl + "/customers/category";
     private List<JobCategoryModel> jobCategoryModels;
     private GridLayout gridLayout;
     private static final int columnCount = 1;
@@ -97,6 +99,7 @@ public class Register extends Fragment implements View.OnClickListener,CompoundB
     private Dialog dialog;
     private TextView selectedText;
     int categoryCount = 0;
+    private AddCategoryModel addCategoryModel;
     public Register() {
         // Required empty public constructor
     }
@@ -126,6 +129,7 @@ public class Register extends Fragment implements View.OnClickListener,CompoundB
             }
 
         };
+        addCategoryModel = new AddCategoryModel();
         selectedText = (TextView) dialog.findViewById(R.id.selectedText);
         dialogSubmitButton = (Button) dialog.findViewById(R.id.submitButton);
         dialogSubmitButton.setOnClickListener(this);
@@ -256,10 +260,9 @@ public class Register extends Fragment implements View.OnClickListener,CompoundB
                     @Override
                     public void onResponse(JSONObject response) {
                         registerProgress.setVisibility(View.INVISIBLE);
-                        Toast.makeText(getActivity(),"Successful",Toast.LENGTH_LONG).show();
                         Gson gson = new Gson();
                         responseModel = gson.fromJson(response.toString(), SignUpResponseModel.class);
-                        OpenCategoryChoice();
+                        addCategoriresOnUser();
                     }
                 },
                 new Response.ErrorListener() {
@@ -348,5 +351,54 @@ public class Register extends Fragment implements View.OnClickListener,CompoundB
       else if(categoryCount == 4 || categoryCount == 5){
           selectedText.setText("Selected: "+ categoryCount +"   Amount: "+ LEVELTHREEPRICE +" Birr/2 Months");
       }
+    }
+
+    private void addCategoriresOnUser(){
+        categoryCount = 0;
+        for (CheckBox checkBox : checkBoxes) {
+            categoryCount++;
+            registerProgress.setVisibility(View.VISIBLE);
+            if (checkBox.isChecked()) {
+                //                   Toast.makeText(getBaseContext(), checkBox.getText(), Toast.LENGTH_LONG).show();
+                addCategoryModel.setCustomerId(responseModel.get_id());
+                addCategoryModel.setJob_category(checkBox.getTag().toString());
+                try {
+                    this.addCategoryToCustomer(addCategoryModel);
+                } catch (JSONException e) {
+                    Toast.makeText(getActivity(), "Error", Toast.LENGTH_LONG).show();
+                }
+            }
+        }
+    }
+
+    public void addCategoryToCustomer(final AddCategoryModel model) throws JSONException {
+
+        Gson gson = new Gson();
+        String json = gson.toJson(model, AddCategoryModel.class);
+        Log.d("myTag", json);
+        JsonObjectRequest request = new JsonObjectRequest(
+                Request.Method.POST, ADD_CATEGORY_REQUEST_URL, new JSONObject(gson.toJson(model, AddCategoryModel.class)),
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        registerProgress.setVisibility(View.INVISIBLE);
+                        if(categoryCount == checkBoxes.size()){
+                            //openLoginPage();
+                            Toast.makeText(getActivity(), "Successful", Toast.LENGTH_LONG).show();
+                        }
+
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        registerProgress.setVisibility(View.INVISIBLE);
+                        Toast.makeText(getActivity(), "not working", Toast.LENGTH_LONG).show();
+                    }
+                }) {
+
+
+        };
+        AppSingleton.getInstance(getActivity()).addToRequestQueue(request, ADD_CATEGORY_REQUEST_URL);
     }
 }
