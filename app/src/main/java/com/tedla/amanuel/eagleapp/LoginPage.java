@@ -85,12 +85,16 @@ public class LoginPage extends AppCompatActivity implements View.OnClickListener
                     @Override
                     public void onResponse(JSONObject response) {
                         dbHandler.clearUser(db);
+                        dbHandler.clearPaidVacancy(db);
                         dbHandler.insertUser(db, user);
                         Toast.makeText(getBaseContext(),"Successful",Toast.LENGTH_LONG).show();
                         loginProgress.setVisibility(View.INVISIBLE);
                         Gson gson = new Gson();
                         loginResponseModel = gson.fromJson(response.toString(), LoginResponseModel.class);
                         UserStatus.login = true;
+                        if(loginResponseModel != null){
+                            UserStatus.loginResponseModel = loginResponseModel;
+                        }
                         openMainActivity();
                     }
                 },

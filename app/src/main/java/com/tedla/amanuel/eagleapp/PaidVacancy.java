@@ -34,6 +34,8 @@ import com.tedla.amanuel.eagleapp.model.VacancyModel;
 
 import org.json.JSONArray;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -47,7 +49,7 @@ import java.util.Map;
 public class PaidVacancy extends Fragment implements SwipeRefreshLayout.OnRefreshListener{
     public ListView vacancyListView;
     private static final String PAID_VACANCY_LIST = BaseURL.baseUrl + "/vacancies";
-    private static final String USER_VACANCY = "/vacancies/searchByCategory?category=";
+    private static final String USER_VACANCY = BaseURL.baseUrl + "/vacancies/searchByCategory?category=";
     private static final String TAG = "PaidVacancy";
     private VacancyListAdapter vacancyListAdapter;
     private List<VacancyModel> vacancyModels;
@@ -143,7 +145,7 @@ public class PaidVacancy extends Fragment implements SwipeRefreshLayout.OnRefres
         this.startActivity(intent);
     }
 
-    public void volleyJsonArrayRequest(String url) {
+    public void openVacancyRequest(String url) {
         populateListViewFromDataBase();
         refreshListView();
         //progressDialog.setMessage("Loawsawaqqaing...");
@@ -158,6 +160,47 @@ public class PaidVacancy extends Fragment implements SwipeRefreshLayout.OnRefres
                 try{
                     VacancyModel[] vacancyModelsarray = gson.fromJson(response.toString(), VacancyModel[].class);
                     dbHandler.clearPaidVacancy(db);
+                    dbHandler.insertPaidVacancy(db, Arrays.asList(vacancyModelsarray));
+                    populateListViewFromDataBase();
+                    refreshListView();
+                }
+                catch (Exception e){
+                    Toast.makeText(getActivity(), e.toString(), Toast.LENGTH_SHORT).show();
+                }
+
+
+                swipeLayout.setRefreshing(false);
+            }
+
+        },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        VolleyLog.d(TAG, "Error: " + error.getMessage());
+                        Toast.makeText(getActivity(), BaseURL.networkErrorText, Toast.LENGTH_SHORT).show();
+                        swipeLayout.setRefreshing(false);
+                    }
+                });
+
+        // Adding JsonObject request to request queue
+        AppSingleton.getInstance(getActivity()).addToRequestQueue(getRequest, PAID_VACANCY_LIST);
+    }
+
+
+    public void searchVacancyRequest(String url) {
+        populateListViewFromDataBase();
+        refreshListView();
+        //progressDialog.setMessage("Loawsawaqqaing...");
+        // progressDialog.show();
+        JsonArrayRequest getRequest = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
+
+            @Override
+            public void onResponse(JSONArray response) {
+                Log.d(TAG, response.toString());
+                Gson gson = new Gson();
+                //Response response = gson.fromJson(yourJsonString, Response.class);
+                try{
+                    VacancyModel[] vacancyModelsarray = gson.fromJson(response.toString(), VacancyModel[].class);
                     dbHandler.insertPaidVacancy(db, Arrays.asList(vacancyModelsarray));
                     populateListViewFromDataBase();
                     refreshListView();
@@ -231,17 +274,23 @@ public class PaidVacancy extends Fragment implements SwipeRefreshLayout.OnRefres
 
     @Override
     public void onRefresh() {
-//        if(UserStatus.login && LoginPage.
-//                loginResponseModel.
-//                getUser().
-//                getCustomer().
-//                getJob_category().
-//                size() != 0) {
-//            this.volleyJsonArrayRequest(USER_VACANCY + LoginPage.loginResponseModel.getUser().getCustomer().getJob_category().get(0).getName());
-//        }
-//        else{
-            this.volleyJsonArrayRequest(PAID_VACANCY_LIST);
-//        }
+        if(UserStatus.login && UserStatus.loginResponseModel.getUser() != null
+                && UserStatus.loginResponseModel.getUser().getCustomer() != null
+                && UserStatus.loginResponseModel.getUser().getCustomer().getJob_category() != null
+                && UserStatus.loginResponseModel.getUser().getCustomer().getJob_category().size() > 0) {
+
+            for(String category: UserStatus.loginResponseModel.getUser().getCustomer().getJob_category()){
+                try {
+                    this.searchVacancyRequest(USER_VACANCY + URLEncoder.encode(category, "UTF-8"));
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }
+        else{
+            this.openVacancyRequest(PAID_VACANCY_LIST);
+      }
 
     }
 

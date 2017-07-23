@@ -5,5 +5,7 @@ package com.tedla.amanuel.eagleapp.model;
  */
 public class UserStatus {
     public static boolean login = false;
-    public static boolean active = false;
+    public static LoginResponseModel loginResponseModel = new LoginResponseModel();
+
+
 }

@@ -6,6 +6,16 @@ package com.tedla.amanuel.eagleapp.model;
 public class LoginResponseModel {
     private String token;
     private LoginUserModel user;
+    private int level;
+
+    public int getLevel() {
+        return level;
+    }
+
+    public void setLevel(int level) {
+        this.level = level;
+    }
+
 
     public String getToken() {
         return token;

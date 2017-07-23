@@ -170,24 +170,29 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     public static void insertPaidVacancy(SQLiteDatabase db,List<VacancyModel> vacancyModels){
         for(VacancyModel vm:vacancyModels) {
-            ContentValues MeterFileValues = new ContentValues();
-            MeterFileValues.put("_id", vm.get_id());
-            MeterFileValues.put("CODE", vm.getCode());
-            MeterFileValues.put("POSITION", vm.getPosition());
-            MeterFileValues.put("DESCRIPTION", vm.getDescription());
-            MeterFileValues.put("EXPERIENCE", vm.getExprience());
-            MeterFileValues.put("QUALIFICATIONS", vm.getQualifications());
-            MeterFileValues.put("STATUS", vm.getStatus());
-            MeterFileValues.put("DUE_DATE", vm.getDue_date());
-            MeterFileValues.put("SALARY", vm.getSalary());
-            MeterFileValues.put("NUMBER_REQUIRED", vm.getNumber_required());
-            MeterFileValues.put("CONTACT", vm.getContact());
-            MeterFileValues.put("MOBILE", vm.getMobile());
-            MeterFileValues.put("EMAIL", vm.getEmail());
-            MeterFileValues.put("LEVEL", vm.getLevel());
-            MeterFileValues.put("SEEN", vm.getSeen());
-            MeterFileValues.put("CATEGORY", vm.getCategory());
-            db.insert("PAID_VACANCY", null, MeterFileValues);
+            ContentValues paidVacancyValues = new ContentValues();
+            paidVacancyValues.put("_id", vm.get_id());
+            paidVacancyValues.put("CODE", vm.getCode());
+            paidVacancyValues.put("POSITION", vm.getPosition());
+            paidVacancyValues.put("DESCRIPTION", vm.getDescription());
+            paidVacancyValues.put("EXPERIENCE", vm.getExprience());
+            paidVacancyValues.put("QUALIFICATIONS", vm.getQualifications());
+            paidVacancyValues.put("STATUS", vm.getStatus());
+            paidVacancyValues.put("DUE_DATE", vm.getDue_date());
+            paidVacancyValues.put("SALARY", vm.getSalary());
+            paidVacancyValues.put("NUMBER_REQUIRED", vm.getNumber_required());
+            paidVacancyValues.put("CONTACT", vm.getContact());
+            paidVacancyValues.put("MOBILE", vm.getMobile());
+            paidVacancyValues.put("EMAIL", vm.getEmail());
+            paidVacancyValues.put("LEVEL", vm.getLevel());
+            paidVacancyValues.put("SEEN", vm.getSeen());
+            paidVacancyValues.put("CATEGORY", vm.getCategory());
+            Cursor resultSet=db.rawQuery("select _id from PAID_VACANCY where _id = '"+vm.get_id()+"'",null);
+            if(resultSet.getCount() == 0)
+            {
+                db.insertOrThrow("PAID_VACANCY", null, paidVacancyValues);
+            }
+
         }
     }
    public List<NewsModel> getNews(SQLiteDatabase db){

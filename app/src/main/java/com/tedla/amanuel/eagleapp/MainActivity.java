@@ -94,6 +94,7 @@ public class MainActivity extends AppCompatActivity implements OnInitListener{
                dbHandler.clearUser(db);
                 dbHandler.clearPaidVacancy(db);
                 siginOut.setText(SIGNINTEXT);
+                UserStatus.login = false;
                 userName.setText("");
             }
         });
@@ -299,6 +300,9 @@ public class MainActivity extends AppCompatActivity implements OnInitListener{
                         Gson gson = new Gson();
                         LoginPage.loginResponseModel = gson.fromJson(response.toString(), LoginResponseModel.class);
                         UserStatus.login = true;
+                        if(LoginPage.loginResponseModel != null){
+                            UserStatus.loginResponseModel = LoginPage.loginResponseModel;
+                        }
                         Toast.makeText(getBaseContext(),"Login successful",Toast.LENGTH_LONG).show();
                     }
                 },
