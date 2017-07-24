@@ -36,6 +36,11 @@ public class HomeTab extends Fragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+    }
+
+    @Override
     public void onPause() {
         super.onPause();
         if(TTS.myTTS !=null){

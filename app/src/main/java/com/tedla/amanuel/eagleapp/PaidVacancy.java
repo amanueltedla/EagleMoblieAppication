@@ -83,7 +83,7 @@ public class PaidVacancy extends Fragment implements SwipeRefreshLayout.OnRefres
                 populateListViewFromDataBase();
                 List<VacancyModel> searchedVModels = new ArrayList<>();
                 for(VacancyModel v:vacancyModels){
-                    if(v.getPosition().contains(s)){
+                    if(v.getPosition().contains(s) || v.getLevel().contains(s)|| v.getCategory().contains(s)){
                         searchedVModels.add(v);
                     }
 
@@ -129,13 +129,17 @@ public class PaidVacancy extends Fragment implements SwipeRefreshLayout.OnRefres
 
         });
         setHasOptionsMenu(true);
+        this.onRefresh();
         //this.volleyJsonArrayRequest(PAID_VACANCY_LIST);
         return root;
 
     }
     private void populateListViewFromDataBase(){
-        vacancyModels.clear();
-        vacancyModels.addAll(dbHandler.getPaidVacancy(db));
+        if(vacancyModels != null && dbHandler != null && vacancyListAdapter != null){
+            vacancyModels.clear();
+            vacancyModels.addAll(dbHandler.getPaidVacancy(db));
+            refreshListView();
+        }
     }
 
     private void openVacancyDetail(int position) {
@@ -260,8 +264,9 @@ public class PaidVacancy extends Fragment implements SwipeRefreshLayout.OnRefres
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
 
-        if (isVisibleToUser)
-            Log.d("MyFragment", "Fragment is visible.");
+        if (isVisibleToUser) {
+            // populateListViewFromDataBase();
+        }
         else{
         if(TTS.myTTS !=null){
             TTS.myTTS.stop();
