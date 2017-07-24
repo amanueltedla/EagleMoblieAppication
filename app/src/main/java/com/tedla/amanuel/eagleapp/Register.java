@@ -99,6 +99,7 @@ public class Register extends Fragment implements View.OnClickListener,CompoundB
     private Dialog dialog;
     private TextView selectedText;
     int categoryCount = 0;
+    int selectedCount = 0;
     private AddCategoryModel addCategoryModel;
     public Register() {
         // Required empty public constructor
@@ -284,9 +285,9 @@ public class Register extends Fragment implements View.OnClickListener,CompoundB
         menu.findItem(R.id.action_search).setVisible(false);
         super.onPrepareOptionsMenu(menu);
     }
-    private void OpenCategoryChoice() {
-        Intent intent = new Intent(getActivity(), CategoryChoice.class);
-        intent.putExtra("CustomerID", responseModel.get_id());
+    private void OpenActivation() {
+        Intent intent = new Intent(getActivity(), Activation.class);
+        //intent.putExtra("CustomerID", responseModel.get_id());
         this.startActivity(intent);
     }
 
@@ -354,9 +355,8 @@ public class Register extends Fragment implements View.OnClickListener,CompoundB
     }
 
     private void addCategoriresOnUser(){
-        categoryCount = 0;
+        selectedCount = 0;
         for (CheckBox checkBox : checkBoxes) {
-            categoryCount++;
             registerProgress.setVisibility(View.VISIBLE);
             if (checkBox.isChecked()) {
                 //                   Toast.makeText(getBaseContext(), checkBox.getText(), Toast.LENGTH_LONG).show();
@@ -372,7 +372,6 @@ public class Register extends Fragment implements View.OnClickListener,CompoundB
     }
 
     public void addCategoryToCustomer(final AddCategoryModel model) throws JSONException {
-
         Gson gson = new Gson();
         String json = gson.toJson(model, AddCategoryModel.class);
         Log.d("myTag", json);
@@ -381,9 +380,10 @@ public class Register extends Fragment implements View.OnClickListener,CompoundB
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
+                        selectedCount++;
                         registerProgress.setVisibility(View.INVISIBLE);
-                        if(categoryCount == checkBoxes.size()){
-                            //openLoginPage();
+                        if(selectedCount == categoryCount){
+                            OpenActivation();
                             Toast.makeText(getActivity(), "Successful", Toast.LENGTH_LONG).show();
                         }
 

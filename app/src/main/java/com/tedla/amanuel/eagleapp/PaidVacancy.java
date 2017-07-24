@@ -1,6 +1,7 @@
 package com.tedla.amanuel.eagleapp;
 
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
@@ -17,7 +18,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -46,7 +50,7 @@ import java.util.Map;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class PaidVacancy extends Fragment implements SwipeRefreshLayout.OnRefreshListener{
+public class PaidVacancy extends Fragment implements SwipeRefreshLayout.OnRefreshListener,View.OnClickListener{
     public ListView vacancyListView;
     private static final String PAID_VACANCY_LIST = BaseURL.baseUrl + "/vacancies";
     private static final String USER_VACANCY = BaseURL.baseUrl + "/vacancies/searchByCategory?category=";
@@ -57,6 +61,10 @@ public class PaidVacancy extends Fragment implements SwipeRefreshLayout.OnRefres
     private SQLiteDatabase db;
     private DatabaseHandler dbHandler;
     private SearchView searchView;
+    private Dialog dialog;
+    private Button dialogSubmittButton;
+    private EditText dialogActivationText;
+    private ProgressBar dialogprogress;
 
     public PaidVacancy() {
         // Required empty public constructor
@@ -104,6 +112,12 @@ public class PaidVacancy extends Fragment implements SwipeRefreshLayout.OnRefres
         // Inflate the layout for this fragment
         View root = inflater.inflate(R.layout.fragment_paid_vacancy, container, false);
         ((MainActivity) getActivity()).setActionBarTitle("Vacancy");
+        dialog = new Dialog(getContext());
+        dialog.setContentView(R.layout.activation_dialog);
+        dialogSubmittButton = (Button) dialog.findViewById(R.id.submitButton);
+        dialogSubmittButton.setOnClickListener(this);
+        dialogActivationText = (EditText) dialog.findViewById(R.id.activationEditText);
+        dialogprogress = (ProgressBar) dialog.findViewById(R.id.activationProgress);
         try {
             dbHandler = new DatabaseHandler(getActivity());
 
@@ -124,7 +138,14 @@ public class PaidVacancy extends Fragment implements SwipeRefreshLayout.OnRefres
             @Override
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
-                openVacancyDetail(position);
+                if(position == 1){
+                    dialog.setTitle("Enter Activation Code");
+                    dialogprogress.setVisibility(View.INVISIBLE);
+                    dialog.show();
+                }
+                else {
+                    openVacancyDetail(position);
+                }
             }
 
         });
@@ -300,4 +321,8 @@ public class PaidVacancy extends Fragment implements SwipeRefreshLayout.OnRefres
     }
 
 
+    @Override
+    public void onClick(View v) {
+
+    }
 }

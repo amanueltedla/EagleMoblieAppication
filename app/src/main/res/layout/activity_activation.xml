@@ -27,7 +27,7 @@
             <Button
                 android:layout_width="115dp"
                 android:layout_height="wrap_content"
-                android:text="Subitt"
+                android:text="Submit"
                 android:id="@+id/submitButton"
                 android:textColor="#ffffff"
                 android:background="@drawable/button_formatter"
@@ -38,7 +38,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="Continue With out Activation"
+                android:text="Continue Without Activation"
                 android:id="@+id/continueText"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="20dp"

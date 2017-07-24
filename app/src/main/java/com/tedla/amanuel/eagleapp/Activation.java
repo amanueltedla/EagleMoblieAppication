@@ -1,5 +1,6 @@
 package com.tedla.amanuel.eagleapp;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -33,6 +34,7 @@ public class Activation extends AppCompatActivity implements View.OnClickListene
         setContentView(R.layout.activity_activation);
         submitt = (Button) findViewById(R.id.submitButton);
         activationProgress = (ProgressBar) findViewById(R.id.activationProgress);
+        activationProgress.setVisibility(View.INVISIBLE);
         submitt.setOnClickListener(this);
         continueText = (TextView) findViewById(R.id.continueText);
         continueText.setOnClickListener(this);
@@ -49,14 +51,14 @@ public class Activation extends AppCompatActivity implements View.OnClickListene
             }
         }
         else if(v.getId() == R.id.continueText){
-
+            OpenMainActivity();
         }
     }
 
     public void activateUser(final ActivationModel activationModel) throws JSONException {
         Gson gson = new Gson();
         JsonObjectRequest request = new JsonObjectRequest(
-                Request.Method.POST, ACTIVATION_URL, new JSONObject(gson.toJson(activationModel,UserModel.class)),
+                Request.Method.POST, ACTIVATION_URL, new JSONObject(gson.toJson(activationModel,ActivationModel.class)),
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
@@ -70,13 +72,18 @@ public class Activation extends AppCompatActivity implements View.OnClickListene
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         activationProgress.setVisibility(View.INVISIBLE);
-                        Toast.makeText(getBaseContext(),"Couldn't Register",Toast.LENGTH_LONG).show();
+                        Toast.makeText(getBaseContext(),"Couldn't Activate",Toast.LENGTH_LONG).show();
                     }
                 })
         {
 
         };
         AppSingleton.getInstance(getBaseContext()).addToRequestQueue(request, ACTIVATION_URL);
+    }
+    private void OpenMainActivity() {
+        Intent intent = new Intent(getBaseContext(), MainActivity.class);
+        //intent.putExtra("CustomerID", responseModel.get_id());
+        this.startActivity(intent);
     }
 
 }
