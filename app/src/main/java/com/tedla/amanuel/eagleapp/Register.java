@@ -29,6 +29,7 @@ import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -46,6 +47,7 @@ import com.tedla.amanuel.eagleapp.model.JobCategoryModel;
 import com.tedla.amanuel.eagleapp.model.SignUpResponseModel;
 import com.tedla.amanuel.eagleapp.model.UserModel;
 import com.tedla.amanuel.eagleapp.model.VacancyModel;
+import com.tedla.amanuel.eagleapp.util.Util;
 
 
 import org.json.JSONArray;
@@ -174,11 +176,13 @@ public class Register extends Fragment implements View.OnClickListener,CompoundB
             userModel.setGender(genderSpinner.getSelectedItem().toString());
             userModel.setExprience(experience.getText().toString());
             userModel.setLevel(levelSpinner.getSelectedItem().toString());
-            registerProgress.setVisibility(View.VISIBLE);
-            try {
-                RegisterUser(userModel);
-            } catch (JSONException e) {
-                e.printStackTrace();
+            if(inputValidation()) {
+                registerProgress.setVisibility(View.VISIBLE);
+                try {
+                    RegisterUser(userModel);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
         }
         else if(view.getId() == R.id.birthDate){
@@ -270,7 +274,16 @@ public class Register extends Fragment implements View.OnClickListener,CompoundB
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         registerProgress.setVisibility(View.INVISIBLE);
-                        Toast.makeText(getActivity(),"Couldn't Register",Toast.LENGTH_LONG).show();
+                        String errorResponse;
+                        NetworkResponse response = error.networkResponse;
+                        errorResponse = new String(response.data);
+                        errorResponse = Util.trimMessage(errorResponse,"message");
+                        if(errorResponse != null){
+                            Toast.makeText(getActivity(),errorResponse,Toast.LENGTH_LONG).show();
+                        }
+                        else{
+                            Toast.makeText(getActivity(),"Internet Error",Toast.LENGTH_LONG).show();
+                        }
                     }
                 })
         {
@@ -400,5 +413,49 @@ public class Register extends Fragment implements View.OnClickListener,CompoundB
 
         };
         AppSingleton.getInstance(getActivity()).addToRequestQueue(request, ADD_CATEGORY_REQUEST_URL);
+    }
+
+    private boolean inputValidation(){
+        if(userID.getText().toString().equals("")){
+            this.displayMessage("User Name couldn't be empty");
+            return false;
+        }
+        if(firstName.getText().toString().equals("")){
+            this.displayMessage("First Name couldn't be empty");
+            return false;
+        }
+        if(lastName.getText().toString().equals("")){
+            this.displayMessage("Last Name couldn't be empty");
+            return false;
+        }
+        if(!(email.getText().toString().contains("@")|| email.getText().toString().equals(""))){
+            this.displayMessage("Invalid Email");
+            return false;
+        }
+        if(mobile.getText().toString().equals("")){
+            this.displayMessage("Mobile couldn't be empty");
+            return false;
+        }
+        if(password.getText().toString().equals("")){
+            this.displayMessage("Password couldn't be empty");
+            return false;
+        }
+        if(password.getText().toString().length() < 6){
+            this.displayMessage("Password length too short");
+            return false;
+        }
+        if(password.getText().toString().length() > 20 ){
+            this.displayMessage("Password length too long");
+            return false;
+        }
+        if(!password.getText().toString().equals(confirmPassword.getText().toString())){
+            this.displayMessage("Password mismatch");
+            return false;
+        }
+      return true;
+    }
+
+    private void displayMessage(String message){
+        Toast.makeText(getActivity(), message, Toast.LENGTH_LONG).show();
     }
 }

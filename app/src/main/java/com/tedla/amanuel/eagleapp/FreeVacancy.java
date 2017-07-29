@@ -48,7 +48,7 @@ import java.util.Map;
  */
 public class FreeVacancy extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
     public ListView vacancyListView;
-    private static final String OPEN_VACANCY_LIST = BaseURL.baseUrl + "/vacancies/open";
+    public static final String OPEN_VACANCY_LIST = BaseURL.baseUrl + "/vacancies/open";
     private static final String TAG = "FreeVacancy";
     private VacancyListAdapter vacancyListAdapter;
     private List<VacancyModel> vacancyModels;

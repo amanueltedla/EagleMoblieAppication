@@ -77,14 +77,6 @@ public class MainActivity extends AppCompatActivity implements OnInitListener{
         }
         db = dbHandler.getWritableDatabase();
         UserModel userModel = dbHandler.getUser(db);
-        if(userModel != null && LoginPage.loginResponseModel == null){
-            try {
-                this.login(userModel);
-            } catch (JSONException e) {
-                Toast toast = Toast.makeText(getBaseContext(), e.getMessage(), Toast.LENGTH_SHORT);
-                toast.show();
-            }
-        }
         alertDialog = new AlertDialog.Builder(MainActivity.this);
 
         alertDialog.setTitle(SIGNOUTTEXT);
@@ -286,36 +278,16 @@ public class MainActivity extends AppCompatActivity implements OnInitListener{
         }
     }
 
-    public void login(final UserModel user) throws JSONException {
+    @Override
+    protected void onDestroy() {
 
-        Gson gson = new Gson();
-        String json = gson.toJson(user,UserModel.class);
-        Log.d("myTag", json);
-        JsonObjectRequest request = new JsonObjectRequest(
-                Request.Method.POST, LOGIN_REQUEST_URL, new JSONObject(gson.toJson(user,UserModel.class)),
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
 
-                        Gson gson = new Gson();
-                        LoginPage.loginResponseModel = gson.fromJson(response.toString(), LoginResponseModel.class);
-                        UserStatus.login = true;
-                        if(LoginPage.loginResponseModel != null){
-                            UserStatus.loginResponseModel = LoginPage.loginResponseModel;
-                        }
-                        Toast.makeText(getBaseContext(),"Login successful",Toast.LENGTH_LONG).show();
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        UserStatus.login = false;
-                        Toast.makeText(getBaseContext(),"Couldn't Sign In",Toast.LENGTH_LONG).show();
-                    }
-                })
-        {
+        //Close the Text to Speech Library
+        if(myTTS != null) {
 
-        };
-        AppSingleton.getInstance(getBaseContext()).addToRequestQueue(request, LOGIN_REQUEST_URL);
+            myTTS.stop();
+            myTTS.shutdown();
+        }
+        super.onDestroy();
     }
 }

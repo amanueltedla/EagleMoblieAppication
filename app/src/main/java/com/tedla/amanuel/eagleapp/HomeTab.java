@@ -46,5 +46,11 @@ public class HomeTab extends Fragment {
         if(TTS.myTTS !=null){
             TTS.myTTS.stop();
         }
+        AppSingleton.getInstance(getActivity()).cancelPendingRequests(FreeVacancy.OPEN_VACANCY_LIST);
+        AppSingleton.getInstance(getActivity()).cancelPendingRequests(PaidVacancy.PAID_VACANCY_LIST);
+
+
+
+
     }
 }

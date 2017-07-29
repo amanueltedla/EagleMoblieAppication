@@ -30,13 +30,18 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.gson.Gson;
 import com.tedla.amanuel.eagleapp.database.DatabaseHandler;
 import com.tedla.amanuel.eagleapp.model.BaseURL;
+import com.tedla.amanuel.eagleapp.model.LoginResponseModel;
+import com.tedla.amanuel.eagleapp.model.UserModel;
 import com.tedla.amanuel.eagleapp.model.UserStatus;
 import com.tedla.amanuel.eagleapp.model.VacancyModel;
 
 import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -52,8 +57,9 @@ import java.util.Map;
  */
 public class PaidVacancy extends Fragment implements SwipeRefreshLayout.OnRefreshListener,View.OnClickListener{
     public ListView vacancyListView;
-    private static final String PAID_VACANCY_LIST = BaseURL.baseUrl + "/vacancies";
-    private static final String USER_VACANCY = BaseURL.baseUrl + "/vacancies/searchByCategory?category=";
+    public static final String PAID_VACANCY_LIST = BaseURL.baseUrl + "/vacancies";
+    public static final String LOGIN_REQUEST_URL = BaseURL.baseUrl + "/users/login";
+    public static final String USER_VACANCY = BaseURL.baseUrl + "/vacancies/searchByCategory?category=";
     private static final String TAG = "PaidVacancy";
     private VacancyListAdapter vacancyListAdapter;
     private List<VacancyModel> vacancyModels;
@@ -300,6 +306,8 @@ public class PaidVacancy extends Fragment implements SwipeRefreshLayout.OnRefres
 
     @Override
     public void onRefresh() {
+        UserModel userModel = dbHandler.getUser(db);
+        populateListViewFromDataBase();
         if(UserStatus.login && UserStatus.loginResponseModel.getUser() != null
                 && UserStatus.loginResponseModel.getUser().getCustomer() != null
                 && UserStatus.loginResponseModel.getUser().getCustomer().getJob_category() != null
@@ -314,10 +322,57 @@ public class PaidVacancy extends Fragment implements SwipeRefreshLayout.OnRefres
 
             }
         }
+
+        else if(userModel != null){
+            try {
+                this.login(userModel);
+            } catch (JSONException e) {
+                Toast toast = Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT);
+                toast.show();
+            }
+        }
         else{
             this.openVacancyRequest(PAID_VACANCY_LIST);
       }
 
+    }
+
+    public void login(final UserModel user) throws JSONException {
+
+        Gson gson = new Gson();
+        String json = gson.toJson(user,UserModel.class);
+        Log.d("myTag", json);
+        JsonObjectRequest request = new JsonObjectRequest(
+                Request.Method.POST, LOGIN_REQUEST_URL, new JSONObject(gson.toJson(user,UserModel.class)),
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        UserModel userModel = dbHandler.getUser(db);
+                        if(userModel != null) {
+                            Gson gson = new Gson();
+                            LoginPage.loginResponseModel = gson.fromJson(response.toString(), LoginResponseModel.class);
+                            UserStatus.login = true;
+                            if (LoginPage.loginResponseModel != null) {
+                                UserStatus.loginResponseModel = LoginPage.loginResponseModel;
+                            }
+                            dbHandler.clearPaidVacancy(db);
+                            onRefresh();
+                            //Toast.makeText(getActivity(),"Login successful",Toast.LENGTH_LONG).show();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        UserStatus.login = false;
+                        Toast.makeText(getActivity(),"Unable to Login",Toast.LENGTH_LONG).show();
+                        swipeLayout.setRefreshing(false);
+                    }
+                })
+        {
+
+        };
+        AppSingleton.getInstance(getActivity()).addToRequestQueue(request, LOGIN_REQUEST_URL);
     }
 
 

@@ -12,6 +12,7 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -23,6 +24,7 @@ import com.tedla.amanuel.eagleapp.model.LoginResponseModel;
 import com.tedla.amanuel.eagleapp.model.SignUpResponseModel;
 import com.tedla.amanuel.eagleapp.model.UserModel;
 import com.tedla.amanuel.eagleapp.model.UserStatus;
+import com.tedla.amanuel.eagleapp.util.Util;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -101,9 +103,18 @@ public class LoginPage extends AppCompatActivity implements View.OnClickListener
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
+                        String errorResponse;
+                        NetworkResponse response = error.networkResponse;
+                        errorResponse = new String(response.data);
+                        errorResponse = Util.trimMessage(errorResponse,"message");
+                        if(errorResponse != null){
+                            Toast.makeText(getBaseContext(),errorResponse,Toast.LENGTH_LONG).show();
+                        }
+                        else{
+                            Toast.makeText(getBaseContext(),"Internet Error",Toast.LENGTH_LONG).show();
+                        }
                         loginProgress.setVisibility(View.INVISIBLE);
                         UserStatus.login = false;
-                        Toast.makeText(getBaseContext(),"Cannot Login",Toast.LENGTH_LONG).show();
                     }
                 })
         {
