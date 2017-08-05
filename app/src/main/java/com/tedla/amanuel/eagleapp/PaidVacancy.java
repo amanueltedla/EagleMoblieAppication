@@ -18,6 +18,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.BaseExpandableListAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -25,6 +26,7 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -33,11 +35,14 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.gson.Gson;
 import com.tedla.amanuel.eagleapp.database.DatabaseHandler;
+import com.tedla.amanuel.eagleapp.model.ActivationRequestModel;
+import com.tedla.amanuel.eagleapp.model.ActivationResopnseModel;
 import com.tedla.amanuel.eagleapp.model.BaseURL;
 import com.tedla.amanuel.eagleapp.model.LoginResponseModel;
 import com.tedla.amanuel.eagleapp.model.UserModel;
 import com.tedla.amanuel.eagleapp.model.UserStatus;
 import com.tedla.amanuel.eagleapp.model.VacancyModel;
+import com.tedla.amanuel.eagleapp.util.Util;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -60,6 +65,7 @@ public class PaidVacancy extends Fragment implements SwipeRefreshLayout.OnRefres
     public static final String PAID_VACANCY_LIST = BaseURL.baseUrl + "/vacancies";
     public static final String LOGIN_REQUEST_URL = BaseURL.baseUrl + "/users/login";
     public static final String USER_VACANCY = BaseURL.baseUrl + "/vacancies/searchByCategory?category=";
+    public static final String ACTIVATION = BaseURL.baseUrl + "/key/activate";
     private static final String TAG = "PaidVacancy";
     private VacancyListAdapter vacancyListAdapter;
     private List<VacancyModel> vacancyModels;
@@ -71,6 +77,8 @@ public class PaidVacancy extends Fragment implements SwipeRefreshLayout.OnRefres
     private Button dialogSubmittButton;
     private EditText dialogActivationText;
     private ProgressBar dialogprogress;
+    private int selectedPostion;
+
 
     public PaidVacancy() {
         // Required empty public constructor
@@ -148,6 +156,7 @@ public class PaidVacancy extends Fragment implements SwipeRefreshLayout.OnRefres
                     dialog.setTitle("Enter Activation Code");
                     dialogprogress.setVisibility(View.INVISIBLE);
                     dialog.show();
+                    selectedPostion = position;
                 }
                 else {
                     openVacancyDetail(position);
@@ -378,6 +387,58 @@ public class PaidVacancy extends Fragment implements SwipeRefreshLayout.OnRefres
 
     @Override
     public void onClick(View v) {
+        if(v.getId() == dialogSubmittButton.getId()){
+            try {
+                activateUser(UserStatus.loginResponseModel,dialogActivationText.getText().toString());
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
+
+    private void activateUser(LoginResponseModel loginResponseModel,String activationCode) throws JSONException {
+        Gson gson = new Gson();
+        ActivationRequestModel aRM = new ActivationRequestModel();
+        aRM.setCustomer_id(loginResponseModel.getUser().getCustomer().get_id());
+        //aRM.setCustomer_level(""+loginResponseModel.getLevel());
+        aRM.setCustomer_level("1");
+        aRM.setKey(activationCode);
+        JsonObjectRequest request = new JsonObjectRequest(
+                Request.Method.POST, ACTIVATION, new JSONObject(gson.toJson(aRM,ActivationRequestModel.class)),
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        ActivationResopnseModel arm = new ActivationResopnseModel();
+                        Gson gson = new Gson();
+                        arm = gson.fromJson(response.toString(), ActivationResopnseModel.class);
+                        if(arm.getMsg() != null){
+                            Toast.makeText(getActivity(),arm.getMsg(),Toast.LENGTH_LONG).show();
+                        }
+                        openVacancyDetail(selectedPostion);
+
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        String errorResponse;
+                        NetworkResponse response = error.networkResponse;
+                        errorResponse = new String(response.data);
+                        errorResponse = Util.trimMessage(errorResponse,"msg");
+                        if(errorResponse != null){
+                            Toast.makeText(getActivity(),errorResponse,Toast.LENGTH_LONG).show();
+                        }
+                        else{
+                            Toast.makeText(getActivity(),"Internet Error",Toast.LENGTH_LONG).show();
+                        }
+
+                    }
+                })
+        {
+
+        };
+        AppSingleton.getInstance(getActivity()).addToRequestQueue(request, ACTIVATION);
 
     }
 }
