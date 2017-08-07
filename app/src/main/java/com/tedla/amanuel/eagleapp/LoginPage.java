@@ -103,10 +103,12 @@ public class LoginPage extends AppCompatActivity implements View.OnClickListener
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        String errorResponse;
+                        String errorResponse = null;
                         NetworkResponse response = error.networkResponse;
-                        errorResponse = new String(response.data);
-                        errorResponse = Util.trimMessage(errorResponse,"message");
+                        if(response !=null) {
+                            errorResponse = new String(response.data);
+                            errorResponse = Util.trimMessage(errorResponse, "message");
+                        }
                         if(errorResponse != null){
                             Toast.makeText(getBaseContext(),errorResponse,Toast.LENGTH_LONG).show();
                         }

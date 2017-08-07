@@ -8,6 +8,17 @@ import java.util.List;
 public class CustomerModel {
     private String _id;
     private String profile;
+    private List<String> job_category;
+    private String status;
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+
 
     public List<String> getJob_category() {
         return job_category;
@@ -17,7 +28,7 @@ public class CustomerModel {
         this.job_category = job_category;
     }
 
-    private List<String> job_category;
+
 
     public String getProfile() {
         return profile;

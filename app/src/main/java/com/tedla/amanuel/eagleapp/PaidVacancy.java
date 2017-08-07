@@ -152,17 +152,19 @@ public class PaidVacancy extends Fragment implements SwipeRefreshLayout.OnRefres
             @Override
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
-                if(position == 1){
+                if (UserStatus.login && UserStatus.loginResponseModel != null
+                        && UserStatus.loginResponseModel.getUser() != null
+                        && UserStatus.loginResponseModel.getUser().getCustomer() != null
+                        && UserStatus.loginResponseModel.getUser().getCustomer().getStatus() != null
+                        && UserStatus.loginResponseModel.getUser().getCustomer().getStatus().equals("active")) {
+                    openVacancyDetail(position);
+                } else {
                     dialog.setTitle("Enter Activation Code");
                     dialogprogress.setVisibility(View.INVISIBLE);
                     dialog.show();
                     selectedPostion = position;
                 }
-                else {
-                    openVacancyDetail(position);
-                }
             }
-
         });
         setHasOptionsMenu(true);
         this.onRefresh();
