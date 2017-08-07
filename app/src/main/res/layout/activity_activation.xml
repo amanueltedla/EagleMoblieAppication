@@ -16,6 +16,25 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center">
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="In need of all job information in one search using a mobile app, hard copy, email, sms and phone call?"
+                android:id="@+id/textView21"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="Your confirmation and job information starts immediately after you register and got your activation code!"
+                android:id="@+id/textView23"
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp" />
+
             <EditText
                 android:layout_width="200dp"
                 android:layout_height="wrap_content"

@@ -12,7 +12,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.tedla.amanuel.eagleapp.model.VacancyModel;
+import com.tedla.amanuel.eagleapp.util.ISO8601;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Locale;
 
 public class VacancyDetailAct extends AppCompatActivity {
@@ -59,13 +62,18 @@ public class VacancyDetailAct extends AppCompatActivity {
         updateUI();
     }
 
-    private void updateUI() {
+    private void updateUI(){
         postionTextView.setText(vacancyModel.getPosition());
         descriptionTextView.setText(vacancyModel.getDescription());
         experienceTextView.setText(vacancyModel.getExprience());
         qualificationsTextView.setText(vacancyModel.getQualifications());
         statusTextView.setText(vacancyModel.getStatus());
-        dueDateTextView.setText(vacancyModel.getDue_date());
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+        try {
+            dueDateTextView.setText(dateFormat.format(ISO8601.toCalendar(vacancyModel.getDue_date()).getTime()));
+        } catch (ParseException e) {
+           dueDateTextView.setText(vacancyModel.getDue_date());
+        }
         salaryTextView.setText(vacancyModel.getSalary());
         numberReqTextView.setText(vacancyModel.getNumber_required());
         contactTextView.setText(vacancyModel.getContact());
