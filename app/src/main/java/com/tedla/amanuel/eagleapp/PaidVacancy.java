@@ -152,13 +152,11 @@ public class PaidVacancy extends Fragment implements SwipeRefreshLayout.OnRefres
             @Override
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
-                if (UserStatus.login && UserStatus.loginResponseModel != null
-                        && UserStatus.loginResponseModel.getUser() != null
-                        && UserStatus.loginResponseModel.getUser().getCustomer() != null
-                        && UserStatus.loginResponseModel.getUser().getCustomer().getStatus() != null
-                        && UserStatus.loginResponseModel.getUser().getCustomer().getStatus().equals("active")) {
+                UserModel userModel = dbHandler.getUser(db);
+                if(userModel != null && userModel.getStatus()!= null && userModel.getStatus().equalsIgnoreCase("active")){
                     openVacancyDetail(position);
-                } else {
+                }
+                 else {
                     dialog.setTitle("Enter Activation Code");
                     dialogprogress.setVisibility(View.INVISIBLE);
                     dialog.show();
@@ -392,6 +390,7 @@ public class PaidVacancy extends Fragment implements SwipeRefreshLayout.OnRefres
         if(v.getId() == dialogSubmittButton.getId()){
             try {
                 activateUser(UserStatus.loginResponseModel,dialogActivationText.getText().toString());
+                dialogprogress.setVisibility(View.VISIBLE);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -402,7 +401,11 @@ public class PaidVacancy extends Fragment implements SwipeRefreshLayout.OnRefres
     private void activateUser(LoginResponseModel loginResponseModel,String activationCode) throws JSONException {
         Gson gson = new Gson();
         ActivationRequestModel aRM = new ActivationRequestModel();
-        aRM.setCustomer_id(loginResponseModel.getUser().getCustomer().get_id());
+        if(loginResponseModel.getUser() != null
+                && loginResponseModel.getUser().getCustomer() != null
+                && loginResponseModel.getUser().getCustomer().get_id() != null) {
+            aRM.setCustomer_id(loginResponseModel.getUser().getCustomer().get_id());
+        }
         //aRM.setCustomer_level(""+loginResponseModel.getLevel());
         aRM.setCustomer_level("1");
         aRM.setKey(activationCode);
@@ -411,6 +414,7 @@ public class PaidVacancy extends Fragment implements SwipeRefreshLayout.OnRefres
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
+                        dialogprogress.setVisibility(View.INVISIBLE);
                         ActivationResopnseModel arm = new ActivationResopnseModel();
                         Gson gson = new Gson();
                         arm = gson.fromJson(response.toString(), ActivationResopnseModel.class);
@@ -424,10 +428,13 @@ public class PaidVacancy extends Fragment implements SwipeRefreshLayout.OnRefres
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        String errorResponse;
+                        dialogprogress.setVisibility(View.INVISIBLE);
+                        String errorResponse = null;
                         NetworkResponse response = error.networkResponse;
-                        errorResponse = new String(response.data);
-                        errorResponse = Util.trimMessage(errorResponse,"msg");
+                        if(response !=null) {
+                            errorResponse = new String(response.data);
+                            errorResponse = Util.trimMessage(errorResponse, "message");
+                        }
                         if(errorResponse != null){
                             Toast.makeText(getActivity(),errorResponse,Toast.LENGTH_LONG).show();
                         }

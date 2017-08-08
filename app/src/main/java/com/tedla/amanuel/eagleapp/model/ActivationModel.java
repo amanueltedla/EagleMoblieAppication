@@ -14,6 +14,7 @@ public class ActivationModel implements Serializable {
         return key;
     }
 
+
     public void setKey(String key) {
         this.key = key;
     }

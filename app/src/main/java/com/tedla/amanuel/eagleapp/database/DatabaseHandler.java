@@ -69,6 +69,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 + "DETAIL TEXT);");
         db.execSQL("CREATE TABLE USER ("
                 + "USERNAME TEXT PRIMARY KEY, "
+                + "STATUS TEXT, "
                 + "PASSWORD TEXT);");
 
         }
@@ -80,6 +81,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         ContentValues userInfoValues = new ContentValues();
         userInfoValues.put("USERNAME",userModel.getUser_name());
         userInfoValues.put("PASSWORD",userModel.getPassword());
+        userInfoValues.put("STATUS", userModel.getStatus());
         db.insert("USER", null, userInfoValues);
     }
     public static void insertNews(SQLiteDatabase db, List<NewsModel> newsmodels){
@@ -92,7 +94,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
     public static UserModel getUser(SQLiteDatabase db){
         Cursor cursor = db.query ("USER",
-                new String[] {"USERNAME","PASSWORD"},
+                new String[] {"USERNAME","PASSWORD","STATUS"},
                null,
                 null,
                 null, null,null);
@@ -100,6 +102,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         if(cursor.moveToFirst()){
             userModel.setUser_name(cursor.getString(0));
             userModel.setPassword(cursor.getString(1));
+            userModel.setStatus(cursor.getString(2));
             return userModel;
         }
         else {
