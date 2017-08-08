@@ -23,6 +23,5 @@
     <string-array name="aboutList">
         <item>Company Info</item>
         <item>Contact Us</item>
-        <item>Terms and Conditions</item>
     </string-array>
 </resources>

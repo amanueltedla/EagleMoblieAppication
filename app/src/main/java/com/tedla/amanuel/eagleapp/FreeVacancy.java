@@ -34,6 +34,7 @@ import com.tedla.amanuel.eagleapp.model.UserStatus;
 import com.tedla.amanuel.eagleapp.model.VacancyModel;
 import android.support.v7.widget.SearchView;
 
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 
 import java.util.ArrayList;
@@ -177,7 +178,9 @@ public class FreeVacancy extends Fragment implements SwipeRefreshLayout.OnRefres
                 populateListViewFromDataBase();
                 List<VacancyModel> searchedVModels = new ArrayList<>();
                 for(VacancyModel v:vacancyModels){
-                    if(v.getPosition().contains(s) || v.getLevel().contains(s)|| v.getCategory().contains(s)){
+                    if(StringUtils.containsIgnoreCase(v.getPosition(), s)
+                            || StringUtils.containsIgnoreCase(v.getLevel(), s)
+                            || StringUtils.containsIgnoreCase(v.getCategory(), s)){
                         searchedVModels.add(v);
                     }
 

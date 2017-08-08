@@ -3,7 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.tedla.amanuel.eagleapp.FreeVacancy">
+    tools:context="com.tedla.amanuel.eagleapp.FreeVacancy"
+    android:background="#ffffff">
 
     <!-- TODO: Update blank fragment layout -->
 
@@ -38,4 +39,11 @@
         android:layout_marginTop="20dp"
         android:textColor="#fd7f45"
         android:textSize="15dp" />
+
+    <ProgressBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/commentProgressBar"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="7dp" />
 </LinearLayout>

@@ -11,7 +11,7 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/login_background">
+        android:background="#ffffff">
 
         <FrameLayout
             android:layout_width="match_parent"
@@ -30,8 +30,8 @@
                     android:layout_marginLeft="50dp"
                     android:layout_marginRight="50dp"
                     android:hint="User ID"
-                    android:textColorHint="#ffffff"
-                    android:textColor="#ffffff" />
+                    android:textColorHint="#000000"
+                    android:textColor="#000000" />
 
                 <EditText
                     android:layout_width="match_parent"
@@ -43,8 +43,8 @@
                     android:layout_marginRight="50dp"
                     android:layout_marginTop="7dp"
                     android:hint="password"
-                    android:textColorHint="#ffffff"
-                    android:textColor="#ffffff"/>
+                    android:textColorHint="#000000"
+                    android:textColor="#000000"/>
 
                 <Button
                     android:layout_width="221dp"

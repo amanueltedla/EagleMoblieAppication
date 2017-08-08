@@ -44,6 +44,7 @@ import com.tedla.amanuel.eagleapp.model.UserStatus;
 import com.tedla.amanuel.eagleapp.model.VacancyModel;
 import com.tedla.amanuel.eagleapp.util.Util;
 
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -105,10 +106,11 @@ public class PaidVacancy extends Fragment implements SwipeRefreshLayout.OnRefres
                 populateListViewFromDataBase();
                 List<VacancyModel> searchedVModels = new ArrayList<>();
                 for(VacancyModel v:vacancyModels){
-                    if(v.getPosition().contains(s) || v.getLevel().contains(s)|| v.getCategory().contains(s)){
+                    if(StringUtils.containsIgnoreCase(v.getPosition(), s)
+                            || StringUtils.containsIgnoreCase(v.getLevel(), s)
+                            || StringUtils.containsIgnoreCase(v.getCategory(), s)){
                         searchedVModels.add(v);
                     }
-
                 }
                 vacancyModels.clear();
                 vacancyModels.addAll(searchedVModels);
@@ -182,6 +184,11 @@ public class PaidVacancy extends Fragment implements SwipeRefreshLayout.OnRefres
         dbHandler.updateSeenPaidVacancy(db, vacancyModels.get(position).get_id());
         Intent intent = new Intent(getActivity(), VacancyDetailAct.class);
         intent.putExtra("Vacancy", vacancyModels.get(position));
+        this.startActivity(intent);
+    }
+
+    private void openLoginPage() {
+        Intent intent = new Intent(getActivity(), LoginPage.class);
         this.startActivity(intent);
     }
 
@@ -406,6 +413,7 @@ public class PaidVacancy extends Fragment implements SwipeRefreshLayout.OnRefres
                 && loginResponseModel.getUser().getCustomer().get_id() != null) {
             aRM.setCustomer_id(loginResponseModel.getUser().getCustomer().get_id());
         }
+
         //aRM.setCustomer_level(""+loginResponseModel.getLevel());
         aRM.setCustomer_level("1");
         aRM.setKey(activationCode);
@@ -420,9 +428,12 @@ public class PaidVacancy extends Fragment implements SwipeRefreshLayout.OnRefres
                         arm = gson.fromJson(response.toString(), ActivationResopnseModel.class);
                         if(arm.getMsg() != null){
                             Toast.makeText(getActivity(),arm.getMsg(),Toast.LENGTH_LONG).show();
+                            if(arm.getMsg().contains("sorry")){
+                                return;
+                            }
                         }
-                        openVacancyDetail(selectedPostion);
 
+                        openLoginPage();
                     }
                 },
                 new Response.ErrorListener() {
@@ -433,7 +444,7 @@ public class PaidVacancy extends Fragment implements SwipeRefreshLayout.OnRefres
                         NetworkResponse response = error.networkResponse;
                         if(response !=null) {
                             errorResponse = new String(response.data);
-                            errorResponse = Util.trimMessage(errorResponse, "message");
+                            errorResponse = Util.trimMessage(errorResponse, "msg");
                         }
                         if(errorResponse != null){
                             Toast.makeText(getActivity(),errorResponse,Toast.LENGTH_LONG).show();

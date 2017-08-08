@@ -296,10 +296,11 @@ public class Register extends Fragment implements View.OnClickListener,CompoundB
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         menu.findItem(R.id.action_search).setVisible(false);
+        menu.findItem(R.id.action_narration).setVisible(false);
         super.onPrepareOptionsMenu(menu);
     }
-    private void OpenActivation() {
-        Intent intent = new Intent(getActivity(), Activation.class);
+    private void OpenLoginPage() {
+        Intent intent = new Intent(getActivity(), LoginPage.class);
         //intent.putExtra("CustomerID", responseModel.get_id());
         this.startActivity(intent);
     }
@@ -396,7 +397,7 @@ public class Register extends Fragment implements View.OnClickListener,CompoundB
                         selectedCount++;
                         registerProgress.setVisibility(View.INVISIBLE);
                         if(selectedCount == categoryCount){
-                            OpenActivation();
+                            OpenLoginPage();
                             Toast.makeText(getActivity(), "Successful", Toast.LENGTH_LONG).show();
                         }
 
@@ -450,6 +451,14 @@ public class Register extends Fragment implements View.OnClickListener,CompoundB
         }
         if(!password.getText().toString().equals(confirmPassword.getText().toString())){
             this.displayMessage("Password mismatch");
+            return false;
+        }
+        if(categoryCount > 5){
+            this.displayMessage("Job Category couldn't be more than 5");
+            return false;
+        }
+        if(categoryCount == 0){
+            this.displayMessage("You should choose at least one Job Category");
             return false;
         }
       return true;

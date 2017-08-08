@@ -187,9 +187,6 @@ public class MainActivity extends AppCompatActivity implements OnInitListener{
             case R.id.nav_fifth_fragment:
                 fragmentClass = Register.class;
                 break;
-            case R.id.nav_sixth_fragment:
-                fragmentClass = Settings.class;
-                break;
             default:
                 fragmentClass = HomeTab.class;
         }
